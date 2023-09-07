@@ -1,9 +1,7 @@
 #include <libfts/fts.hpp>
 
-namespace fts{
+namespace fts {
 
-double sum_two_numbers(double x, double y){
-    return x + y;
-}
+double sum_two_numbers(double x, double y) { return x + y; }
 
-}
+} // namespace fts
