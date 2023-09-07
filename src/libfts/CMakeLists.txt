@@ -18,21 +18,22 @@ target_link_libraries(
   PRIVATE
 )
 
-include(GoogleTest)
-
 add_executable(
-  test
+  fts.test
   libfts/fts.test.cpp
 )
 
 target_link_libraries(
-  test
+  fts.test
   GTest::gtest_main
   fts
 )
 
 target_include_directories(
-    test
+    fts.test
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
 )
+
+include(GoogleTest)
+gtest_discover_tests(fts.test)
