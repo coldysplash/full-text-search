@@ -1,6 +1,6 @@
 #pragma once
 
-namespace fts{
+namespace fts {
 
 double sum_two_numbers(double x, double y);
 
