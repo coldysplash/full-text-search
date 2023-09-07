@@ -7,7 +7,6 @@
 #include <string>
 
 int main(int argc, char **argv) {
-
   CLI::App app("Sum two numbers");
 
   double value_1{0.0};
@@ -18,7 +17,5 @@ int main(int argc, char **argv) {
 
   CLI11_PARSE(app, argc, argv);
 
-  std::cout << "Sum = " << fts::sum_two_numbers(value_1, value_2) << std::endl;
-
-  return 0;
+  std::cout << "Sum = " << fts::sum_two_numbers(value_1, value_2) << '\n';
 }
