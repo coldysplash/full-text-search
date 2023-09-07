@@ -12,8 +12,7 @@ int main(int argc, char **argv) {
 
   double value_1{0.0};
   double value_2{0.0};
-  app.add_option(
-      "--first", value_1, "./app --first x --second y");
+  app.add_option("--first", value_1, "./app --first x --second y");
   app.add_option(
       "--second", value_2, "app - name exe file | x, y - value numbers");
 
