@@ -29,11 +29,5 @@ target_link_libraries(
   fts
 )
 
-target_include_directories(
-    fts.test
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}
-)
-
 include(GoogleTest)
 gtest_discover_tests(fts.test)
