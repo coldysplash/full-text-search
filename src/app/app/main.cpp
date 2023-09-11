@@ -1,4 +1,4 @@
-#include <libfts/fts.hpp>
+#include <common/parser.hpp>
 
 #include <CLI/CLI.hpp>
 
@@ -6,24 +6,22 @@
 
 #include <string>
 
-int main(int argc, char **argv) {
+// int main(int argc, char **argv) {
+int main() {
+  std::string text = "H.e.l.l.o!";
+  parser::delete_puncts(text);
+  std::cout << text << std::endl;
 
-  try {
-    CLI::App app("Sum two numbers");
+  // CLI::App app("Sum two numbers");
 
-    double value_1{0.0};
-    double value_2{0.0};
-    app.add_option("--first", value_1, "./app --first x --second y")
-        ->required();
-    app.add_option(
-           "--second", value_2, "app - name exe file | x, y - value numbers")
-        ->required();
-    CLI11_PARSE(app, argc, argv);
+  // double value_1{0.0};
+  // double value_2{0.0};
+  // app.add_option("--first", value_1, "./app --first x --second
+  // y")->required(); app.add_option(
+  //        "--second", value_2, "app - name exe file | x, y - value numbers")
+  //     ->required();
 
-    std::cout << "Sum = " << fts::sum_two_numbers(value_1, value_2) << '\n';
-  } catch (const std::exception &e) {
-    std::cerr << e.what() << '\n';
-  }
+  // CLI11_PARSE(app, argc, argv);
 
-  return 0;
+  // std::cout << "Sum = " << fts::sum_two_numbers(value_1, value_2) << '\n';
 }
