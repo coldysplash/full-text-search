@@ -15,15 +15,14 @@ int main() {
   parser::str_tolower(text);
   std::vector<std::string> list_strings;
   parser::delete_spaces(list_strings, text);
-  std::vector<std::string> stop_words = {"and", "a", "an"};
+  const std::vector<std::string> stop_words = {"and", "a", "an"};
   parser::delete_stop_words(list_strings, stop_words);
   for(auto &s: list_strings){
     std::cout << s << '\n';
   }
-  // const std::vector<std::string> stop_words = {"and", "a" , "an"};
-  // parser::delete_stop_words(text, stop_words);
+  // const short ngram_min_length = 2;
+  // const short ngram_max_length = 4;
 
-  // std::cout << text << std::endl;
 
   // CLI::App app("Sum two numbers");
 
