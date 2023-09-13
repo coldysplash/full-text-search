@@ -1,29 +1,26 @@
-#include <common/parser.hpp>
 #include <algorithm>
 #include <cctype>
+#include <common/parser.hpp>
 #include <iostream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace parser {
 
-void delete_puncts(std::string &pars_string) {
+void modify_text(std::string &pars_string) {
   pars_string.erase(
-      std::remove_if(pars_string.begin(), pars_string.end(), ::ispunct),
+      std::remove_if(pars_string.begin(), pars_string.end(), ispunct),
       pars_string.end());
-}
 
-void str_tolower(std::string &pars_string) {
   std::transform(
-      pars_string.begin(), pars_string.end(), pars_string.begin(), [](char &c) {
-        return std::tolower(c);
-      });
+      pars_string.begin(), pars_string.end(), pars_string.begin(), tolower);
 }
 
 void delete_spaces(
     std::vector<std::string> &list_strings, std::string &pars_string) {
 
-  size_t start;
+  size_t start = 0;
   size_t end = 0;
 
   while ((start = pars_string.find_first_not_of(' ', end)) !=
@@ -35,18 +32,22 @@ void delete_spaces(
 
 void delete_stop_words(
     std::vector<std::string> &list_strings,
-    const std::vector<std::string> &stop_words) {
-  for (auto iter{list_strings.begin()}; iter != list_strings.end(); iter++) {
-    for (auto &c : stop_words) {
-      if (*iter == c) {
-        list_strings.erase(iter);
-      }
-    }
-  }
+    const std::unordered_set<std::string> &stop_words) {
+
+  list_strings.erase(
+      std::remove_if(
+          list_strings.begin(),
+          list_strings.end(),
+          [&stop_words](std::string &item) {
+            return (stop_words.find(item) != stop_words.end());
+          }),
+      list_strings.end());
 }
 
-// void list_ngram(std::vector<std::string> &list_strings, const short &ngram_min_length, const short &ngram_max_length){
-
-// }
+// void list_ngram(
+//     std::vector<std::string> &list_strings,
+//     std::vector<std::string> &ngram_words,
+//     const short &ngram_min_length,
+//     const short &ngram_max_length) {}
 
 } // namespace parser
