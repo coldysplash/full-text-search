@@ -2,6 +2,6 @@
 
 namespace fts {
 
-double sum_two_numbers(const double x, const double y) { return x + y; }
+double sum_two_numbers(double x, double y) { return x + y; }
 
 } // namespace fts
