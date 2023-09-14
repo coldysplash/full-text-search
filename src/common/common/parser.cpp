@@ -61,8 +61,15 @@ void NgramParser(
       list_strings.begin(),
       list_strings.end(),
       [&ngram_words, &ngram_min_length, &ngram_max_length](std::string &item) {
-        for (uint16_t i = ngram_min_length; i <= ngram_max_length; i++) {
-          ngram_words.push_back(item.substr(0, i));
+        uint64_t size = item.size();
+        if (size < ngram_max_length && size > ngram_min_length) {
+          for (uint64_t i = ngram_min_length; i <= size; i++) {
+            ngram_words.push_back(item.substr(0, i));
+          }
+        } else if (size >= ngram_max_length) {
+          for (uint16_t i = ngram_min_length; i <= ngram_max_length; i++) {
+            ngram_words.push_back(item.substr(0, i));
+          }
         }
       });
 }

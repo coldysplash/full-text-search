@@ -10,32 +10,41 @@
 
 #include <unordered_set>
 
-// int main(int argc, char **argv) {
-int main() {
-  std::string text = "Hello and goodbye!!!";
-  const std::unordered_set<std::string> stop_words{"and", "a", "an"};
-  uint16_t ngram_min_length = 2;
-  uint16_t ngram_max_length = 6;
+#include <fstream>
 
-  std::vector<std::string> ngram_words;
+#include <nlohmann/json.hpp>
 
-  parser::NgramParser(
-      text, stop_words, ngram_words, ngram_min_length, ngram_max_length);
+using json = nlohmann::json;
 
-  for (auto &item : ngram_words) {
-    std::cout << item << ' ';
+int main(int argc, char **argv) {
+  try {
+    CLI::App app("Parser");
+    std::string filename = "config.json";
+    app.add_option("--config", filename, "<path> (default=config.json)");
+
+    CLI11_PARSE(app, argc, argv);
+
+    std::ifstream file(filename);
+    json data = json::parse(file);
+    std::string text = data["text"];
+    const std::unordered_set<std::string> stop_words = data["stop_words"];
+    uint16_t ngram_min_length = 3;
+    uint16_t ngram_max_length = 7;
+
+    std::cout << "Input: " << text << '\n';
+
+    std::vector<std::string> ngram_words;
+    parser::NgramParser(
+        text, stop_words, ngram_words, ngram_min_length, ngram_max_length);
+
+    std::cout << "Output: ";
+    for (auto &item : ngram_words) {
+      std::cout << item << ' ';
+    }
+    std::cout << '\n';
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << '\n';
+    std::cerr << "Invalid input file!" << '\n';
+    return -1;
   }
-
-  // CLI::App app("Sum two numbers");
-
-  // double value_1{0.0};
-  // double value_2{0.0};
-  // app.add_option("--first", value_1, "./app --first x --second
-  // y")->required(); app.add_option(
-  //        "--second", value_2, "app - name exe file | x, y - value numbers")
-  //     ->required();
-
-  // CLI11_PARSE(app, argc, argv);
-
-  // std::cout << "Sum = " << fts::sum_two_numbers(value_1, value_2) << '\n';
 }
