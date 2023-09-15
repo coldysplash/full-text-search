@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -14,7 +15,7 @@ void delete_stop_words(
 void NgramParser(
     std::string &pars_string,
     const std::unordered_set<std::string> &stop_words,
-    std::vector<std::string> &ngram_words,
+    std::unordered_map<std::string, int> &ngram_words,
     uint16_t ngram_min_length,
     uint16_t ngram_max_length);
 

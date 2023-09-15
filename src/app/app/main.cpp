@@ -14,6 +14,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include <unordered_map>
+
 using json = nlohmann::json;
 
 int main(int argc, char **argv) {
@@ -33,13 +35,13 @@ int main(int argc, char **argv) {
 
     std::cout << "Input: " << text << '\n';
 
-    std::vector<std::string> ngram_words;
+    std::unordered_map<std::string, int> ngram_words;
     parser::NgramParser(
         text, stop_words, ngram_words, ngram_min_length, ngram_max_length);
 
     std::cout << "Output: ";
-    for (auto &item : ngram_words) {
-      std::cout << item << ' ';
+    for (const auto &[en, ru] : ngram_words) {
+      std::cout << en << " " << ru << ' ';
     }
     std::cout << '\n';
   } catch (const std::exception &e) {
