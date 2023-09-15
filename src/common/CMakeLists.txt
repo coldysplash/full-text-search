@@ -17,3 +17,17 @@ target_link_libraries(
     ${target_name}
     PRIVATE
 )
+
+add_executable(
+  parser.test
+  common/parser.test.cpp
+)
+
+target_link_libraries(
+  parser.test
+  GTest::gtest_main
+  parser
+)
+
+include(GoogleTest)
+gtest_discover_tests(parser.test)
