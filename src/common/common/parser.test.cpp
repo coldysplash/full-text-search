@@ -43,14 +43,12 @@ TEST(test_NgramParser, parser_test) {
   parser::NgramParser(
       text, stop_words, ngram_words, ngram_min_length, ngram_max_length);
   std::unordered_map<std::string, int> ngram_words_expected = {
-      {"hyde", 3},
-      {"mr", 2},
-      {"jekyll", 1},
-      {"jekyl", 1},
-      {"jeky", 1},
-      {"jek", 1},
-      {"hyd", 3},
-      {"dr", 0}};
+      {"hyde", 1},
+      {"hyd", 1},
+      {"jekyll", 0},
+      {"jekyl", 0},
+      {"jeky", 0},
+      {"jek", 0}};
   ASSERT_EQ(ngram_words, ngram_words_expected);
 }
 

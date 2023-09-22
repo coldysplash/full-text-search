@@ -45,18 +45,11 @@ void delete_stop_words(
       list_strings.end());
 }
 
-void NgramParser(
-    std::string &pars_string,
-    const std::unordered_set<std::string> &stop_words,
+void split_to_ngrams(
     std::unordered_map<std::string, int> &ngram_words,
+    std::vector<std::string> &list_strings,
     uint16_t ngram_min_length,
     uint16_t ngram_max_length) {
-
-  std::vector<std::string> list_strings;
-
-  modify_text(pars_string);
-  delete_spaces(list_strings, pars_string);
-  delete_stop_words(list_strings, stop_words);
 
   int ngram_index = 0;
 
@@ -71,9 +64,6 @@ void NgramParser(
             ngram_words.insert({item.substr(0, i), ngram_index});
           }
           ngram_index++;
-        } else if (size < ngram_min_length) {
-          ngram_words.insert({item, ngram_index});
-          ngram_index++;
         } else if (size >= ngram_max_length) {
           for (uint16_t i = ngram_min_length; i <= ngram_max_length; i++) {
             ngram_words.insert({item.substr(0, i), ngram_index});
@@ -81,6 +71,22 @@ void NgramParser(
           ngram_index++;
         }
       });
+}
+
+void NgramParser(
+    std::string &pars_string,
+    const std::unordered_set<std::string> &stop_words,
+    std::unordered_map<std::string, int> &ngram_words,
+    uint16_t ngram_min_length,
+    uint16_t ngram_max_length) {
+
+  std::vector<std::string> list_strings;
+
+  modify_text(pars_string);
+  delete_spaces(list_strings, pars_string);
+  delete_stop_words(list_strings, stop_words);
+  split_to_ngrams(
+      ngram_words, list_strings, ngram_min_length, ngram_max_length);
 }
 
 } // namespace parser
