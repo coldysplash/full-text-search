@@ -1,20 +1,14 @@
 #include <common/parser.hpp>
 
 #include <CLI/CLI.hpp>
-
-#include <iostream>
-
-#include <string>
-
-#include <vector>
-
-#include <unordered_set>
-
-#include <fstream>
-
 #include <nlohmann/json.hpp>
 
+#include <fstream>
+#include <iostream>
+#include <string>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 using json = nlohmann::json;
 

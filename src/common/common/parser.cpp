@@ -1,6 +1,7 @@
+#include <common/parser.hpp>
+
 #include <algorithm>
 #include <cctype>
-#include <common/parser.hpp>
 #include <iostream>
 #include <string>
 #include <unordered_map>
