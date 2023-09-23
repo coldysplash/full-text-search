@@ -10,7 +10,7 @@
 
 namespace parser {
 
-void modify_text(std::string &pars_string) {
+void normalize_text(std::string &pars_string) {
   pars_string.erase(
       std::remove_if(pars_string.begin(), pars_string.end(), ispunct),
       pars_string.end());
@@ -74,7 +74,7 @@ void split_to_ngrams(
       });
 }
 
-void NgramParser(
+void parse_text(
     std::string &pars_string,
     const std::unordered_set<std::string> &stop_words,
     std::unordered_map<std::string, int> &ngram_words,
@@ -83,7 +83,7 @@ void NgramParser(
 
   std::vector<std::string> list_strings;
 
-  modify_text(pars_string);
+  normalize_text(pars_string);
   delete_spaces(list_strings, pars_string);
   delete_stop_words(list_strings, stop_words);
   split_to_ngrams(

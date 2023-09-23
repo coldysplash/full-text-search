@@ -7,7 +7,7 @@ TEST(test_modify_text, parser_test) {
       "WHEN YOU START SEEING YOUR WORTH, YOU'LL STOP SEEING PEOPLE WHO DON'T.";
   std::string expected_text =
       "when you start seeing your worth youll stop seeing people who dont";
-  parser::modify_text(text);
+  parser::normalize_text(text);
   ASSERT_EQ(text, expected_text);
 }
 
@@ -40,7 +40,7 @@ TEST(test_NgramParser, parser_test) {
   uint16_t ngram_min_length = 3;
   uint16_t ngram_max_length = 6;
   std::unordered_map<std::string, int> ngram_words;
-  parser::NgramParser(
+  parser::parse_text(
       text, stop_words, ngram_words, ngram_min_length, ngram_max_length);
   std::unordered_map<std::string, int> ngram_words_expected = {
       {"hyde", 1},
