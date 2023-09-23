@@ -18,7 +18,7 @@ void split_to_ngrams(
     uint16_t ngram_min_length,
     uint16_t ngram_max_length);
 void parse_text(
-    std::string &pars_string,
+    std::string pars_string,
     const std::unordered_set<std::string> &stop_words,
     std::unordered_map<std::string, int> &ngram_words,
     uint16_t ngram_min_length,
