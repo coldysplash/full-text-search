@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
     std::ifstream file(filename);
     json data = json::parse(file);
-    std::string text = data["text"];
+    const std::string text = data["text"];
     const std::unordered_set<std::string> stop_words = data["stop_words"];
     const uint16_t ngram_min_length = data["ngram_min_length"];
     const uint16_t ngram_max_length = data["ngram_max_length"];
