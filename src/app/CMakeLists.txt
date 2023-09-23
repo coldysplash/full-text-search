@@ -1,4 +1,5 @@
 set(target_name app)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 add_executable(${target_name})
 
@@ -14,6 +15,7 @@ target_sources(
 target_link_libraries(
   ${target_name}
   PRIVATE
-    fts
     CLI11
+    parser
+    nlohmann_json::nlohmann_json
 )
