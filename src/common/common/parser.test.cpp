@@ -39,10 +39,10 @@ TEST(test_NgramParser, parser_test) {
       "there", "these", "they", "this", "to", "was",  "will", "with"};
   uint16_t ngram_min_length = 3;
   uint16_t ngram_max_length = 6;
-  std::unordered_map<std::string, int> ngram_words;
+  std::unordered_map<std::string, size_t> ngram_words;
   parser::parse_text(
       text, stop_words, ngram_words, ngram_min_length, ngram_max_length);
-  std::unordered_map<std::string, int> ngram_words_expected = {
+  std::unordered_map<std::string, size_t> ngram_words_expected = {
       {"hyde", 1},
       {"hyd", 1},
       {"jekyll", 0},

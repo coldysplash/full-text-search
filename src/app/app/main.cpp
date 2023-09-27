@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 
     std::cout << "Input: " << text << '\n';
 
-    std::unordered_map<std::string, int> ngram_words;
+    std::unordered_map<std::string, size_t> ngram_words;
     parser::parse_text(
         text, stop_words, ngram_words, ngram_min_length, ngram_max_length);
 
