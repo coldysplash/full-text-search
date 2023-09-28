@@ -54,24 +54,20 @@ void split_to_ngrams(
 
   int ngram_index = 0;
 
-  std::for_each(
-      list_strings.begin(),
-      list_strings.end(),
-      [&ngram_words, &ngram_min_length, &ngram_max_length, &ngram_index](
-          std::string &item) {
-        const size_t size = item.size();
-        if (size < ngram_max_length && size > ngram_min_length) {
-          for (size_t i = ngram_min_length; i <= size; i++) {
-            ngram_words.insert({item.substr(0, i), ngram_index});
-          }
-          ngram_index++;
-        } else if (size >= ngram_max_length) {
-          for (size_t i = ngram_min_length; i <= ngram_max_length; i++) {
-            ngram_words.insert({item.substr(0, i), ngram_index});
-          }
-          ngram_index++;
-        }
-      });
+  for (auto &item : list_strings) {
+    const size_t size = item.size();
+    if (size < ngram_max_length && size >= ngram_min_length) {
+      for (size_t i = ngram_min_length; i <= size; i++) {
+        ngram_words.insert({item.substr(0, i), ngram_index});
+      }
+      ngram_index++;
+    } else if (size >= ngram_max_length) {
+      for (size_t i = ngram_min_length; i <= ngram_max_length; i++) {
+        ngram_words.insert({item.substr(0, i), ngram_index});
+      }
+      ngram_index++;
+    }
+  }
 }
 
 void parse_text(
