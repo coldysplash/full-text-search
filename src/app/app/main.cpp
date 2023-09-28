@@ -1,4 +1,5 @@
 #include <common/parser.hpp>
+#include <indexer/indexer.hpp>
 
 #include <CLI/CLI.hpp>
 #include <nlohmann/json.hpp>
@@ -22,22 +23,22 @@ int main(int argc, char **argv) {
 
     std::ifstream file(filename);
     json data = json::parse(file);
-    const std::string text = data["text"];
     const std::unordered_set<std::string> stop_words = data["stop_words"];
     const uint16_t ngram_min_length = data["ngram_min_length"];
     const uint16_t ngram_max_length = data["ngram_max_length"];
 
-    std::cout << "Input: " << text << '\n';
+    indexer::IndexBuilder index(ngram_min_length, ngram_max_length, stop_words);
+    index.add_document(100, "The Matrix");
+    index.add_document(101, "The Matrix Reloaded");
+    index.add_document(102, "The Matrix Revolutions");
+    indexer::Index doci = index.index();
 
-    std::unordered_map<std::string, size_t> ngram_words;
-    parser::parse_text(
-        text, stop_words, ngram_words, ngram_min_length, ngram_max_length);
-
-    std::cout << "Output: ";
-    for (const auto &[en, ru] : ngram_words) {
-      std::cout << en << " " << ru << ' ';
-    }
     std::cout << '\n';
+
+    for (const auto &[key, val] : doci.docs) {
+      std::cout << key << ' ' << val << '\n';
+    }
+
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
     std::cerr << "Invalid input file!" << '\n';

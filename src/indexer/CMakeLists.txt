@@ -16,6 +16,7 @@ target_include_directories(
 target_link_libraries(
     ${target_name}
     PRIVATE
+      parser
 )
 
 add_executable(
@@ -31,4 +32,4 @@ target_link_libraries(
 )
 
 include(GoogleTest)
-gtest_discover_tests(parser.test)
+gtest_discover_tests(indexer.test)
