@@ -34,36 +34,41 @@ void delete_spaces(
 
 void delete_stop_words(
     std::vector<std::string> &list_strings,
-    const std::unordered_set<std::string> &stop_words) {
+    const std::unordered_set<std::string> &stop_words,
+    uint16_t ngram_min_length) {
 
   list_strings.erase(
       std::remove_if(
           list_strings.begin(),
           list_strings.end(),
-          [&stop_words](std::string &item) {
-            return (stop_words.find(item) != stop_words.end());
+          [&](std::string &item) {
+            return (
+                stop_words.find(item) != stop_words.end() ||
+                item.size() < ngram_min_length);
           }),
       list_strings.end());
 }
 
 void split_to_ngrams(
-    std::unordered_map<std::string, size_t> &ngram_words,
+    std::vector<std::vector<std::string>> &ngram_words,
     std::vector<std::string> &list_strings,
     uint16_t ngram_min_length,
     uint16_t ngram_max_length) {
 
-  int ngram_index = 0;
+  ngram_words.resize(list_strings.size());
+
+  size_t ngram_index = 0;
 
   for (auto &item : list_strings) {
     const size_t size = item.size();
     if (size < ngram_max_length && size >= ngram_min_length) {
       for (size_t i = ngram_min_length; i <= size; i++) {
-        ngram_words.insert({item.substr(0, i), ngram_index});
+        ngram_words[ngram_index].push_back(item.substr(0, i));
       }
       ngram_index++;
     } else if (size >= ngram_max_length) {
       for (size_t i = ngram_min_length; i <= ngram_max_length; i++) {
-        ngram_words.insert({item.substr(0, i), ngram_index});
+        ngram_words[ngram_index].push_back(item.substr(0, i));
       }
       ngram_index++;
     }
@@ -73,7 +78,7 @@ void split_to_ngrams(
 void parse_text(
     std::string pars_string,
     const std::unordered_set<std::string> &stop_words,
-    std::unordered_map<std::string, size_t> &ngram_words,
+    std::vector<std::vector<std::string>> &ngram_words,
     uint16_t ngram_min_length,
     uint16_t ngram_max_length) {
 
@@ -81,7 +86,7 @@ void parse_text(
 
   normalize_text(pars_string);
   delete_spaces(list_strings, pars_string);
-  delete_stop_words(list_strings, stop_words);
+  delete_stop_words(list_strings, stop_words, ngram_min_length);
   split_to_ngrams(
       ngram_words, list_strings, ngram_min_length, ngram_max_length);
 }
