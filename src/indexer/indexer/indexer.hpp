@@ -1,14 +1,14 @@
 #pragma once
+#include <map>
+#include <set>
 #include <string>
-#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
 namespace indexer {
 
-using Docs = std::unordered_map<size_t, std::string>;
-using Entries =
-    std::unordered_map<std::string, std::vector<std::unordered_set<size_t>>>;
+using Docs = std::map<size_t, std::string>;
+using Entries = std::map<std::string, std::map<size_t, std::set<size_t>>>;
 
 struct Index {
   Docs docs;

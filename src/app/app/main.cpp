@@ -28,12 +28,23 @@ int main(int argc, char **argv) {
     const uint16_t ngram_max_length = data["ngram_max_length"];
 
     indexer::IndexBuilder index(ngram_min_length, ngram_max_length, stop_words);
-    index.add_document(100, "The Matrix");
+    index.add_document(100, "The Matrix matrix");
     index.add_document(101, "The Matrix Reloaded");
-    index.add_document(102, "The Matrix Revolutions");
+    index.add_document(102, "The Matrix");
+    index.add_document(103, "The Matrix");
+
     indexer::Index doci = index.index();
 
-    std::cout << '\n';
+    for (const auto &[key, value] : doci.entries) {
+      std::cout << key << ' ';
+      for (const auto &[k, v] : value) {
+        std::cout << k << ' ';
+        for (const auto &s : v) {
+          std::cout << s << ' ';
+        }
+      }
+      std::cout << '\n';
+    }
 
     for (const auto &[key, val] : doci.docs) {
       std::cout << key << ' ' << val << '\n';

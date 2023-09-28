@@ -2,6 +2,8 @@
 #include <indexer/indexer.hpp>
 
 #include <iostream>
+#include <map>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -11,21 +13,17 @@ namespace indexer {
 
 void IndexBuilder::add_document(size_t document_id, const std::string &text) {
 
-  index_.docs.emplace(document_id, text);
+  index_.docs.insert({document_id, text});
 
-  std::unordered_map<std::string, size_t> ngrams_out;
+  std::vector<std::vector<std::string>> ngrams;
 
   parser::parse_text(
-      text, stop_words, ngrams_out, ngram_min_length, ngram_max_length);
-  // std::string term;
-  // size_t doc_count = 0;
-  // std::unordered_set<size_t> doc_id;
-  // size_t pos_count = 0;
-  // size_t pos = 0;
+      text, stop_words, ngrams, ngram_min_length, ngram_max_length);
 
-  // for (const auto &[key, val] : ngrams_out) {
-  //   std::cout << key << ' ' << val << ' ';
-  // }
-  // std::cout << '\n';
+  for (size_t pos = 0; pos < ngrams.size(); ++pos) {
+    for (const auto &word : ngrams[pos]) {
+      index_.entries[word][document_id].insert(pos);
+    }
+  }
 }
 } // namespace indexer
