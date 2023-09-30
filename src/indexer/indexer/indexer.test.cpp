@@ -8,11 +8,7 @@
 TEST(test_add_document, IndexBuilder_test) {
   const uint16_t ngram_min_length = 3;
   const uint16_t ngram_max_length = 6;
-  const std::unordered_set<std::string> stop_words = {
-      "a",     "an",    "and",  "are",  "as", "at",   "be",   "but",   "by",
-      "for",   "if",    "in",   "into", "is", "it",   "no",   "not",   "of",
-      "on",    "or",    "s",    "such", "t",  "that", "the",  "their", "then",
-      "there", "these", "they", "this", "to", "was",  "will", "with"};
+  const std::unordered_set<std::string> stop_words = {"the"};
 
   indexer::IndexBuilder index({ngram_min_length, ngram_max_length}, stop_words);
   index.add_document(100, "The Matrix matrix");
