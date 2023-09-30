@@ -1,12 +1,14 @@
 #include <common/parser.hpp>
 #include <indexer/indexer.hpp>
 
+#include <picosha2.h>
+
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <set>
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 namespace indexer {
@@ -26,4 +28,39 @@ void IndexBuilder::add_document(size_t document_id, const std::string &text) {
     }
   }
 }
+
+void TextIndexWriter::write(std::string path, Index index_) {
+
+  std::filesystem::create_directories(path);
+
+  if (!index_.docs.empty()) {
+    std::string path_docs = path + "/docs/";
+    std::filesystem::create_directories(path_docs);
+    for (const auto &[id, str] : index_.docs) {
+      std::ofstream file(path_docs + std::to_string(id));
+      file << str;
+    }
+  }
+
+  if (!index_.entries.empty()) {
+    std::string path_entries = path + "/entries/";
+    std::filesystem::create_directories(path_entries);
+    for (const auto &[term, term_info] : index_.entries) {
+      std::string hash_term;
+      picosha2::hash256_hex_string(term, hash_term);
+      std::ofstream file(path_entries + hash_term.substr(0, 6));
+      file << term << ' ';
+      file << term_info.size() << ' ';
+      for (const auto &[doc_id, info] : term_info) {
+        file << doc_id << ' ';
+        file << info.size() << ' ';
+        for (const auto &i : info) {
+          file << i << ' ';
+        }
+      }
+      file.close();
+    }
+  }
+}
+
 } // namespace indexer

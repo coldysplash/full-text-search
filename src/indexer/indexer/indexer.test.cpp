@@ -14,20 +14,21 @@ TEST(test_add_document, IndexBuilder_test) {
       "on",    "or",    "s",    "such", "t",  "that", "the",  "their", "then",
       "there", "these", "they", "this", "to", "was",  "will", "with"};
 
-  indexer::IndexBuilder index(ngram_min_length, ngram_max_length, stop_words);
-  index.add_document(100, "The Matrix");
+  indexer::IndexBuilder index({ngram_min_length, ngram_max_length}, stop_words);
+  index.add_document(100, "The Matrix matrix");
   index.add_document(101, "The Matrix Reloaded");
 
   indexer::Index doci = index.index();
 
   indexer::Index doci_expected;
-  doci_expected.docs = {{100, "The Matrix"}, {101, "The Matrix Reloaded"}};
+  doci_expected.docs = {
+      {100, "The Matrix matrix"}, {101, "The Matrix Reloaded"}};
 
   doci_expected.entries = {
-      {"mat", {{100, {0}}, {101, {0}}}},
-      {"matr", {{100, {0}}, {101, {0}}}},
-      {"matri", {{100, {0}}, {101, {0}}}},
-      {"matrix", {{100, {0}}, {101, {0}}}},
+      {"mat", {{100, {0, 1}}, {101, {0}}}},
+      {"matr", {{100, {0, 1}}, {101, {0}}}},
+      {"matri", {{100, {0, 1}}, {101, {0}}}},
+      {"matrix", {{100, {0, 1}}, {101, {0}}}},
       {"rel", {{101, {1}}}},
       {"relo", {{101, {1}}}},
       {"reloa", {{101, {1}}}},
