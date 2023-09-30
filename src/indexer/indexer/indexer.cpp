@@ -34,7 +34,7 @@ void TextIndexWriter::write(std::string path, Index index_) {
   std::filesystem::create_directories(path);
 
   if (!index_.docs.empty()) {
-    std::string path_docs = path + "/docs/";
+    const std::string path_docs = path + "/docs/";
     std::filesystem::create_directories(path_docs);
     for (const auto &[id, str] : index_.docs) {
       std::ofstream file(path_docs + std::to_string(id));
@@ -43,7 +43,7 @@ void TextIndexWriter::write(std::string path, Index index_) {
   }
 
   if (!index_.entries.empty()) {
-    std::string path_entries = path + "/entries/";
+    const std::string path_entries = path + "/entries/";
     std::filesystem::create_directories(path_entries);
     for (const auto &[term, term_info] : index_.entries) {
       std::string hash_term;

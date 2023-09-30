@@ -18,6 +18,7 @@ struct Index {
 class IndexWriter {
 public:
   virtual void write(std::string path, Index index_) = 0;
+  virtual ~IndexWriter() = default;
 };
 
 class TextIndexWriter : public IndexWriter {
