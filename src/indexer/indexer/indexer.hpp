@@ -16,28 +16,28 @@ struct Index {
 
 class IndexWriter {
 public:
-  virtual void write(std::string path, Index index_) = 0;
+  virtual void write(std::string &path, Index const &index_) = 0;
   virtual ~IndexWriter() = default;
 };
 
 class TextIndexWriter : public IndexWriter {
 public:
-  void write(std::string path, Index index_) override;
+  void write(std::string &path, Index const &index_) override;
 };
 
 class IndexBuilder {
 private:
   Index index_;
-  const uint16_t ngram_min_length;
-  const uint16_t ngram_max_length;
-  const std::unordered_set<std::string> &stop_words;
+  const uint16_t ngram_min_length_;
+  const uint16_t ngram_max_length_;
+  const std::unordered_set<std::string> &stop_words_;
 
 public:
   explicit IndexBuilder(
       const std::pair<uint16_t, uint16_t> ngram_ranges,
       const std::unordered_set<std::string> &stop_words)
-      : ngram_min_length(ngram_ranges.first),
-        ngram_max_length(ngram_ranges.second), stop_words(stop_words) {}
+      : ngram_min_length_(ngram_ranges.first),
+        ngram_max_length_(ngram_ranges.second), stop_words_(stop_words) {}
 
   void add_document(size_t document_id, const std::string &text);
   Index index() const { return index_; };

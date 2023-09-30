@@ -36,7 +36,8 @@ int main(int argc, char **argv) {
     const indexer::Index doc_index = index.index();
 
     indexer::TextIndexWriter w;
-    w.write("index", doc_index);
+    std::string path = "index";
+    w.write(path, doc_index);
 
     for (const auto &[key, value] : doc_index.entries) {
       std::cout << key << ' ';

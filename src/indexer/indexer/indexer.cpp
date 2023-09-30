@@ -18,7 +18,7 @@ void IndexBuilder::add_document(size_t document_id, const std::string &text) {
   std::vector<std::vector<std::string>> ngrams;
 
   parser::parse_text(
-      text, stop_words, ngrams, ngram_min_length, ngram_max_length);
+      text, stop_words_, ngrams, ngram_min_length_, ngram_max_length_);
 
   for (size_t pos = 0; pos < ngrams.size(); ++pos) {
     for (const auto &word : ngrams[pos]) {
@@ -27,7 +27,7 @@ void IndexBuilder::add_document(size_t document_id, const std::string &text) {
   }
 }
 
-void TextIndexWriter::write(std::string path, Index index_) {
+void TextIndexWriter::write(std::string &path, Index const &index_) {
 
   std::filesystem::create_directories(path);
 
