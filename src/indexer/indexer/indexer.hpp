@@ -16,21 +16,21 @@ struct Index {
 
 class IndexWriter {
 public:
-  virtual void write(std::string &path, Index const &index_) = 0;
+  virtual void write(std::string &path, Index const &index) = 0;
   virtual ~IndexWriter() = default;
 };
 
 class TextIndexWriter : public IndexWriter {
 public:
-  void write(std::string &path, Index const &index_) override;
+  void write(std::string &path, Index const &index) override;
 };
 
 class IndexBuilder {
 private:
   Index index_;
-  const uint16_t ngram_min_length_;
-  const uint16_t ngram_max_length_;
-  const std::unordered_set<std::string> &stop_words_;
+  uint16_t ngram_min_length_;
+  uint16_t ngram_max_length_;
+  std::unordered_set<std::string> stop_words_;
 
 public:
   explicit IndexBuilder(
