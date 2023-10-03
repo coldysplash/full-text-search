@@ -16,5 +16,10 @@ Checks: >
   -readability-identifier-length,
   -readability-magic-numbers
 WarningsAsErrors: '*'
-HeaderFilterRegex: '.*/(common|app)/'
+HeaderFilterRegex: 'src/(indexer|common|app)'
+CheckOptions:
+  - key:             cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+    value:           'true'
+  - key:             hicpp-special-member-functions.AllowSoleDefaultDtor
+    value:           'true'
 ...

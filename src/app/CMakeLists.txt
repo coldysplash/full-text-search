@@ -15,7 +15,8 @@ target_sources(
 target_link_libraries(
   ${target_name}
   PRIVATE
-    CLI11
     parser
+    indexer
+    CLI11
     nlohmann_json::nlohmann_json
 )
