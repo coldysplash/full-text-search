@@ -33,7 +33,7 @@ private:
   parser::ParserOpts parser_opts_;
 
 public:
-  explicit IndexBuilder(parser::ParserOpts &parser_opts)
+  explicit IndexBuilder(parser::ParserOpts parser_opts)
       : parser_opts_(std::move(parser_opts)) {}
 
   void add_document(size_t document_id, const std::string &text);
