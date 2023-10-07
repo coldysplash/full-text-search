@@ -17,8 +17,7 @@ void IndexBuilder::add_document(size_t document_id, const std::string &text) {
 
   std::vector<std::vector<std::string>> ngrams;
 
-  parser::parse_text(
-      text, stop_words_, ngrams, ngram_min_length_, ngram_max_length_);
+  parser::parse_text(text, ngrams, parser_opts_);
 
   for (size_t pos = 0; pos < ngrams.size(); ++pos) {
     for (const auto &word : ngrams[pos]) {

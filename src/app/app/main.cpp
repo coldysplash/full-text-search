@@ -23,12 +23,13 @@ int main(int argc, char **argv) {
 
     std::ifstream file(filename);
     json data = json::parse(file);
-    const std::unordered_set<std::string> stop_words = data["stop_words"];
-    const uint16_t ngram_min_length = data["ngram_min_length"];
-    const uint16_t ngram_max_length = data["ngram_max_length"];
 
-    indexer::IndexBuilder index(
-        {ngram_min_length, ngram_max_length}, stop_words);
+    parser::ParserOpts parser_opts;
+    parser_opts.stop_words_ = data["stop_words"];
+    parser_opts.ngram_min_length_ = data["ngram_min_length"];
+    parser_opts.ngram_max_length_ = data["ngram_max_length"];
+
+    indexer::IndexBuilder index(parser_opts);
     index.add_document(100, "The Matrix matrix");
     index.add_document(101, "The Matrix Reloaded");
     index.add_document(102, "The Matrix Revolutions");

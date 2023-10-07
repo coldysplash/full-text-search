@@ -1,8 +1,10 @@
 #pragma once
+
+#include <common/parser.hpp>
+
 #include <map>
 #include <set>
 #include <string>
-#include <unordered_set>
 
 namespace indexer {
 
@@ -28,16 +30,11 @@ public:
 class IndexBuilder {
 private:
   Index index_;
-  uint16_t ngram_min_length_;
-  uint16_t ngram_max_length_;
-  std::unordered_set<std::string> stop_words_;
+  parser::ParserOpts parser_opts_;
 
 public:
-  explicit IndexBuilder(
-      const std::pair<uint16_t, uint16_t> ngram_ranges,
-      const std::unordered_set<std::string> &stop_words)
-      : ngram_min_length_(ngram_ranges.first),
-        ngram_max_length_(ngram_ranges.second), stop_words_(stop_words) {}
+  explicit IndexBuilder(parser::ParserOpts &parser_opts)
+      : parser_opts_(std::move(parser_opts)) {}
 
   void add_document(size_t document_id, const std::string &text);
   Index index() const { return index_; };
