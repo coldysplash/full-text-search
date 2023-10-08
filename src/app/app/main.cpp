@@ -41,21 +41,6 @@ int main(int argc, char **argv) {
     std::filesystem::path path = "index";
     w.write(path, doc_index);
 
-    for (const auto &[key, value] : doc_index.entries) {
-      std::cout << key << ' ';
-      for (const auto &[k, v] : value) {
-        std::cout << k << ' ';
-        for (const auto &s : v) {
-          std::cout << s << ' ';
-        }
-      }
-      std::cout << '\n';
-    }
-    std::cout << '\n';
-    for (const auto &[key, val] : doc_index.docs) {
-      std::cout << key << ' ' << val << '\n';
-    }
-
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
     std::cerr << "Invalid input file!" << '\n';
