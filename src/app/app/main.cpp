@@ -4,6 +4,7 @@
 #include <CLI/CLI.hpp>
 #include <nlohmann/json.hpp>
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -37,7 +38,7 @@ int main(int argc, char **argv) {
     const indexer::Index doc_index = index.index();
 
     indexer::TextIndexWriter w;
-    std::string path = "index";
+    std::filesystem::path path = "index";
     w.write(path, doc_index);
 
     for (const auto &[key, value] : doc_index.entries) {

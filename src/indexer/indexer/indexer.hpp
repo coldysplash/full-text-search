@@ -2,6 +2,7 @@
 
 #include <common/parser.hpp>
 
+#include <filesystem>
 #include <map>
 #include <set>
 #include <string>
@@ -18,13 +19,13 @@ struct Index {
 
 class IndexWriter {
 public:
-  virtual void write(std::string &path, Index const &index) = 0;
+  virtual void write(std::filesystem::path &path, Index const &index) = 0;
   virtual ~IndexWriter() = default;
 };
 
 class TextIndexWriter : public IndexWriter {
 public:
-  void write(std::string &path, Index const &index) override;
+  void write(std::filesystem::path &path, Index const &index) override;
 };
 
 class IndexBuilder {

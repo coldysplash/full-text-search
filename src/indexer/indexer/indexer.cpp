@@ -26,26 +26,26 @@ void IndexBuilder::add_document(size_t document_id, const std::string &text) {
   }
 }
 
-void TextIndexWriter::write(std::string &path, Index const &index) {
+void TextIndexWriter::write(std::filesystem::path &path, Index const &index) {
 
   std::filesystem::create_directories(path);
 
   if (!index.docs.empty()) {
-    const std::string path_docs = path + "/docs/";
+    const std::filesystem::path path_docs = path / "docs";
     std::filesystem::create_directories(path_docs);
     for (const auto &[id, str] : index.docs) {
-      std::ofstream file(path_docs + std::to_string(id));
+      std::ofstream file(path_docs / std::to_string(id));
       file << str;
     }
   }
 
   if (!index.entries.empty()) {
-    const std::string path_entries = path + "/entries/";
+    const std::filesystem::path path_entries = path / "entries";
     std::filesystem::create_directories(path_entries);
     for (const auto &[term, term_info] : index.entries) {
       std::string hash_term;
       picosha2::hash256_hex_string(term, hash_term);
-      std::ofstream file(path_entries + hash_term.substr(0, 6));
+      std::ofstream file(path_entries / hash_term.substr(0, 6));
       file << term << ' ';
       file << term_info.size() << ' ';
       for (const auto &[doc_id, info] : term_info) {
