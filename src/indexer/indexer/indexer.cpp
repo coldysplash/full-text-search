@@ -28,23 +28,25 @@ void IndexBuilder::add_document(size_t document_id, const std::string &text) {
 
 void TextIndexWriter::write(std::filesystem::path &path, Index const &index) {
 
-  std::filesystem::create_directories(path);
+  std::filesystem::create_directories(path / "index");
 
   if (!index.docs.empty()) {
-    const std::filesystem::path path_docs = path / "docs";
+    const std::filesystem::path path_docs = path / "index/docs";
     size_t total_docs = 0;
     std::filesystem::create_directories(path_docs);
     for (const auto &[id, str] : index.docs) {
       std::ofstream file(path_docs / std::to_string(id));
       file << str;
+      file.close();
       total_docs++;
     }
     std::ofstream file(path_docs / "total_docs");
     file << total_docs;
+    file.close();
   }
 
   if (!index.entries.empty()) {
-    const std::filesystem::path path_entries = path / "entries";
+    const std::filesystem::path path_entries = path / "index/entries";
     std::filesystem::create_directories(path_entries);
     for (const auto &[term, term_info] : index.entries) {
       std::string hash_term;

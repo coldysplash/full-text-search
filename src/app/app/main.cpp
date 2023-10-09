@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     const indexer::Index doc_index = index.index();
 
     indexer::TextIndexWriter w;
-    std::filesystem::path path = "index";
+    std::filesystem::path path = ".";
     w.write(path, doc_index);
 
   } catch (const std::exception &e) {
