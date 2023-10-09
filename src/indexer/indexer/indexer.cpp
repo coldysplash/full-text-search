@@ -32,11 +32,15 @@ void TextIndexWriter::write(std::filesystem::path &path, Index const &index) {
 
   if (!index.docs.empty()) {
     const std::filesystem::path path_docs = path / "docs";
+    size_t total_docs = 0;
     std::filesystem::create_directories(path_docs);
     for (const auto &[id, str] : index.docs) {
       std::ofstream file(path_docs / std::to_string(id));
       file << str;
+      total_docs++;
     }
+    std::ofstream file(path_docs / "total_docs");
+    file << total_docs;
   }
 
   if (!index.entries.empty()) {
