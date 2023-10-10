@@ -2,45 +2,45 @@
 
 #include <filesystem>
 #include <iostream>
+#include <map>
 #include <string>
-#include <unordered_set>
+#include <vector>
+
+namespace searcher {
+
+using Entries = std::map<std::string, std::map<size_t, std::vector<size_t>>>;
 
 struct Result {
-  double score;
-  size_t document_id;
-};
-
-struct Config {
-  size_t ngram_min_length_ = 3;
-  size_t ngram_max_length_ = 6;
-  std::unordered_set<std::string> stop_words_;
+  std::map<size_t, double> result_;
 };
 
 struct TermInfos {
-  size_t term_frequency = 0;
-  size_t document_frequency = 0;
+  Entries entries_;
 };
 
-Result search(std::string query, IndexAccessor &index_accessor);
-
-// interface
 class IndexAccessor {
 public:
-  virtual Config config() = 0;
   virtual TermInfos get_term_infos(const std::string &term) = 0;
   virtual std::string load_document(size_t document_id) = 0;
   virtual size_t total_docs() = 0;
   virtual ~IndexAccessor() = default;
-}
+};
 
 class TextIndexAccessor : public IndexAccessor {
 private:
-  std::filesystem path_;
+  std::filesystem::path path_;
+  TermInfos term_infos_;
 
 public:
-  void TextIndexAccessor(std::filesystem::path &path);
-  Config config() const override;
+  TextIndexAccessor(std::filesystem::path path) : path_(path) {}
+
   TermInfos get_term_infos(const std::string &term) override;
   std::string load_document(size_t document_id) override;
   size_t total_docs() override;
 };
+
+Result search(const std::string &query, TextIndexAccessor &index_accessor);
+
+} // namespace searcher
+
+// double tf_idf(const double tf, const double df, const double N);
