@@ -37,12 +37,10 @@ void TextIndexWriter::write(std::filesystem::path &path, Index const &index) {
     for (const auto &[id, str] : index.docs) {
       std::ofstream file(path_docs / std::to_string(id));
       file << str;
-      file.close();
       total_docs++;
     }
     std::ofstream file(path_docs / "total_docs");
     file << total_docs;
-    file.close();
   }
 
   if (!index.entries.empty()) {
@@ -61,7 +59,6 @@ void TextIndexWriter::write(std::filesystem::path &path, Index const &index) {
           file << i << ' ';
         }
       }
-      file.close();
     }
   }
 }
