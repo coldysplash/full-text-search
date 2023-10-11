@@ -9,13 +9,17 @@
 #include <string>
 #include <vector>
 
+double tf_idf(const double tf, const double df, const double N) {
+  const double result = tf * log(N / df);
+  return result;
+}
+
 namespace searcher {
 
 Result search(const std::string &query, TextIndexAccessor &index_accessor) {
 
   std::vector<std::vector<std::string>> terms;
-  const parser::ParserOpts opts;
-  parser::parse_text(query, terms, opts);
+  parser::parse_text(query, terms, index_accessor.config());
 
   TermInfos term_info;
   for (const auto &items : terms) {
@@ -24,29 +28,22 @@ Result search(const std::string &query, TextIndexAccessor &index_accessor) {
     }
   }
 
-  // size_t doc_id = 0;
-  // const size_t total_docs = index_accessor.total_docs();
-  // size_t tf = 0;
-  // size_t df = 0;
-  // size_t res = 0;
-  // for (const auto &[key, value] : term_info.entries_) {
-  //   for (const auto &[k, v] : value) {
-  //     doc_id = k;
-  //     tf = v[0];
-  //     df = v[1];
-  //     res = tf_idf(tf, df, total_docs);
-  //   }
-  // }
   Result result;
+  const auto total_docs = static_cast<double>(index_accessor.total_docs());
+  for (const auto &[key, value] : term_info.entries_) {
+    for (const auto &[k, v] : value) {
+      const size_t doc_id = k;
+      const auto tf = static_cast<double>(v[0]);
+      const auto df = static_cast<double>(v[1]);
+      const double tmp_res = tf_idf(tf, df, total_docs);
+      result.results_[doc_id] += tmp_res;
+    }
+  }
+
+  sort_results(result);
+
   return result;
 }
-
-// double score(TermInfos term_info, size_t doc_id) {}
-
-// double tf_idf(const size_t tf, const size_t df, const size_t N) {
-//   const double result = tf * log(N / df);
-//   return result;
-// }
 
 TermInfos TextIndexAccessor::get_term_infos(const std::string &term) {
 
@@ -70,10 +67,7 @@ TermInfos TextIndexAccessor::get_term_infos(const std::string &term) {
     const size_t term_frequency = std::stoi(list_terms[i]);
     term_infos_.entries_[term][doc_id].push_back(term_frequency);
     term_infos_.entries_[term][doc_id].push_back(doc_frequency);
-    i++;
-    for (size_t j = 0; j < term_frequency; ++j) {
-      i++;
-    }
+    i += term_frequency + 1;
   }
 
   return term_infos_;
@@ -94,5 +88,24 @@ size_t TextIndexAccessor::total_docs() {
 
   return total_docs;
 }
+
+void sort_results(Result &result) {
+  std::copy(
+      result.results_.begin(),
+      result.results_.end(),
+      std::back_inserter<std::vector<pair>>(result.sorted_results_));
+
+  std::sort(
+      result.sorted_results_.begin(),
+      result.sorted_results_.end(),
+      [](const pair &l, const pair &r) {
+        if (l.second != r.second) {
+          return l.second > r.second;
+        }
+
+        return l.first > r.first;
+      });
+
+} /*https://www.techiedelight.com/ru/sort-map-values-cpp/*/
 
 } // namespace searcher

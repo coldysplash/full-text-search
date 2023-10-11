@@ -1,3 +1,4 @@
+#include <common/parser.hpp>
 #include <searcher/searcher.hpp>
 
 #include <gtest/gtest.h>
@@ -6,10 +7,13 @@
 
 TEST(test_search, Searcher_test) {
 
-  std::filesystem::path path = ".";
-  std::string q = "matrix revolutions";
+  parser::ParserOpts parse_opts;
+  parse_opts.stop_words_ = {"the"};
 
-  searcher::TextIndexAccessor accessor(path);
+  std::filesystem::path path = ".";
+  std::string q = "Hello world";
+
+  searcher::TextIndexAccessor accessor(path, parse_opts);
   searcher::search(q, accessor);
 }
 
