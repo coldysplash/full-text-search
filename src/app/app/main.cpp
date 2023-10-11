@@ -1,5 +1,6 @@
 #include <common/parser.hpp>
 #include <indexer/indexer.hpp>
+#include <searcher/searcher.hpp>
 
 #include <CLI/CLI.hpp>
 #include <nlohmann/json.hpp>
@@ -30,16 +31,32 @@ int main(int argc, char **argv) {
     parser_opts.ngram_min_length_ = data["ngram_min_length"];
     parser_opts.ngram_max_length_ = data["ngram_max_length"];
 
+    /*indexer*/
     indexer::IndexBuilder index(parser_opts);
-    index.add_document(100, "The Matrix matrix");
-    index.add_document(101, "The Matrix Reloaded");
-    index.add_document(102, "The Matrix Revolutions");
+    index.add_document(100, "Hello World");
+    index.add_document(101, "Bye World");
+    index.add_document(102, "Hello Earth");
 
     const indexer::Index doc_index = index.index();
-
     indexer::TextIndexWriter w;
     std::filesystem::path path = ".";
     w.write(path, doc_index);
+
+    /*search*/
+    const std::string query = "Hello World";
+    searcher::TextIndexAccessor accessor(path, parser_opts);
+    const searcher::Result result = searcher::search(query, accessor);
+
+    std::cout << "Query: " << query << '\n';
+    std::cout << " id "
+              << " score "
+              << "      text" << '\n';
+
+    for (auto const &pair : result.sorted_results_) {
+      const std::string text = accessor.load_document(pair.first);
+      std::cout << pair.first << "  " << pair.second << "    " << text << '\n';
+    }
+    std::cout << std::endl;
 
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';

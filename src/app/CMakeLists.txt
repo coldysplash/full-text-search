@@ -17,6 +17,7 @@ target_link_libraries(
   PRIVATE
     parser
     indexer
+    searcher
     CLI11
     nlohmann_json::nlohmann_json
 )
