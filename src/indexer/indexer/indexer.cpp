@@ -27,9 +27,12 @@ void IndexBuilder::add_document(size_t document_id, const std::string &text) {
 }
 
 void TextIndexWriter::write(std::filesystem::path &path, Index const &index) {
-
   std::filesystem::create_directories(path / "index");
+  write_direct_index(path, index);
+  write_reverse_index(path, index);
+}
 
+void write_direct_index(std::filesystem::path &path, Index const &index) {
   if (!index.docs.empty()) {
     const std::filesystem::path path_docs = path / "index/docs";
     size_t total_docs = 0;
@@ -42,21 +45,39 @@ void TextIndexWriter::write(std::filesystem::path &path, Index const &index) {
     std::ofstream file(path_docs / "total_docs");
     file << total_docs;
   }
+}
 
+void write_reverse_index(std::filesystem::path &path, Index const &index) {
   if (!index.entries.empty()) {
     const std::filesystem::path path_entries = path / "index/entries";
     std::filesystem::create_directories(path_entries);
     for (const auto &[term, term_info] : index.entries) {
       std::string hash_term;
       picosha2::hash256_hex_string(term, hash_term);
-      std::ofstream file(path_entries / hash_term.substr(0, 6));
-      file << term << ' ';
-      file << term_info.size() << ' ';
-      for (const auto &[doc_id, info] : term_info) {
-        file << doc_id << ' ';
-        file << info.size() << ' ';
-        for (const auto &i : info) {
-          file << i << ' ';
+      const std::filesystem::path path_entries_hash =
+          path_entries / hash_term.substr(0, 6);
+      const std::ifstream file(path_entries_hash);
+      if (!file.is_open()) {
+        std::ofstream file(path_entries_hash);
+        file << term << ' ';
+        file << term_info.size() << ' ';
+        for (const auto &[doc_id, info] : term_info) {
+          file << doc_id << ' ';
+          file << info.size() << ' ';
+          for (const auto &i : info) {
+            file << i << ' ';
+          }
+        }
+      } else {
+        std::ofstream file(path_entries_hash, std::ios::app);
+        file << '\n' << term << ' ';
+        file << term_info.size() << ' ';
+        for (const auto &[doc_id, info] : term_info) {
+          file << doc_id << ' ';
+          file << info.size() << ' ';
+          for (const auto &i : info) {
+            file << i << ' ';
+          }
         }
       }
     }

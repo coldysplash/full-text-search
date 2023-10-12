@@ -28,6 +28,9 @@ public:
   void write(std::filesystem::path &path, Index const &index) override;
 };
 
+void write_direct_index(std::filesystem::path &path, Index const &index);
+void write_reverse_index(std::filesystem::path &path, Index const &index);
+
 class IndexBuilder {
 private:
   Index index_;
