@@ -56,28 +56,22 @@ void write_reverse_index(const fs_path &path, Index const &index) {
       picosha2::hash256_hex_string(term, hash_term);
       const fs_path path_entries_hash = path_entries / hash_term.substr(0, 6);
       const std::ifstream file(path_entries_hash);
+      std::string entries;
+      entries.append(term).append(" ");
+      entries.append(std::to_string(term_info.size())).append(" ");
+      for (const auto &[doc_id, info] : term_info) {
+        entries.append(std::to_string(doc_id)).append(" ");
+        entries.append(std::to_string(info.size())).append(" ");
+        for (const auto &i : info) {
+          entries.append(std::to_string(i)).append(" ");
+        }
+      }
       if (!file.is_open()) {
         std::ofstream file(path_entries_hash);
-        file << term << ' ';
-        file << term_info.size() << ' ';
-        for (const auto &[doc_id, info] : term_info) {
-          file << doc_id << ' ';
-          file << info.size() << ' ';
-          for (const auto &i : info) {
-            file << i << ' ';
-          }
-        }
+        file << entries;
       } else {
         std::ofstream file(path_entries_hash, std::ios::app);
-        file << '\n' << term << ' ';
-        file << term_info.size() << ' ';
-        for (const auto &[doc_id, info] : term_info) {
-          file << doc_id << ' ';
-          file << info.size() << ' ';
-          for (const auto &i : info) {
-            file << i << ' ';
-          }
-        }
+        file << '\n' << entries;
       }
     }
   }
