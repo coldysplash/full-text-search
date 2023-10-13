@@ -26,15 +26,15 @@ void IndexBuilder::add_document(size_t document_id, const std::string &text) {
   }
 }
 
-void TextIndexWriter::write(std::filesystem::path &path, Index const &index) {
+void TextIndexWriter::write(const fs_path &path, Index const &index) {
   std::filesystem::create_directories(path / "index");
   write_direct_index(path, index);
   write_reverse_index(path, index);
 }
 
-void write_direct_index(std::filesystem::path &path, Index const &index) {
+void write_direct_index(const fs_path &path, Index const &index) {
   if (!index.docs.empty()) {
-    const std::filesystem::path path_docs = path / "index/docs";
+    const fs_path path_docs = path / "index/docs";
     size_t total_docs = 0;
     std::filesystem::create_directories(path_docs);
     for (const auto &[id, str] : index.docs) {
@@ -47,15 +47,14 @@ void write_direct_index(std::filesystem::path &path, Index const &index) {
   }
 }
 
-void write_reverse_index(std::filesystem::path &path, Index const &index) {
+void write_reverse_index(const fs_path &path, Index const &index) {
   if (!index.entries.empty()) {
-    const std::filesystem::path path_entries = path / "index/entries";
+    const fs_path path_entries = path / "index/entries";
     std::filesystem::create_directories(path_entries);
     for (const auto &[term, term_info] : index.entries) {
       std::string hash_term;
       picosha2::hash256_hex_string(term, hash_term);
-      const std::filesystem::path path_entries_hash =
-          path_entries / hash_term.substr(0, 6);
+      const fs_path path_entries_hash = path_entries / hash_term.substr(0, 6);
       const std::ifstream file(path_entries_hash);
       if (!file.is_open()) {
         std::ofstream file(path_entries_hash);

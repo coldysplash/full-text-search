@@ -17,19 +17,21 @@ struct Index {
   Entries entries;
 };
 
+using fs_path = std::filesystem::path;
+
 class IndexWriter {
 public:
-  virtual void write(std::filesystem::path &path, Index const &index) = 0;
+  virtual void write(const fs_path &path, Index const &index) = 0;
   virtual ~IndexWriter() = default;
 };
 
 class TextIndexWriter : public IndexWriter {
 public:
-  void write(std::filesystem::path &path, Index const &index) override;
+  void write(const fs_path &path, Index const &index) override;
 };
 
-void write_direct_index(std::filesystem::path &path, Index const &index);
-void write_reverse_index(std::filesystem::path &path, Index const &index);
+void write_direct_index(const fs_path &path, Index const &index);
+void write_reverse_index(const fs_path &path, Index const &index);
 
 class IndexBuilder {
 private:

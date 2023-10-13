@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 
     const indexer::Index doc_index = index.index();
     indexer::TextIndexWriter w;
-    std::filesystem::path path = ".";
+    const std::filesystem::path path = ".";
     w.write(path, doc_index);
 
     /*search*/
