@@ -52,22 +52,20 @@ TermInfos TextIndexAccessor::get_term_infos(const std::string &term) {
   std::ifstream file(path_ / "index/entries" / hash_term.substr(0, 6));
 
   std::string term_entries;
-  while (file) {
-    std::getline(file, term_entries);
-  }
-
-  std::vector<std::string> list_terms;
-  parser::delete_spaces(list_terms, term_entries);
-
-  const size_t doc_frequency = std::stoi(list_terms[1]);
-  size_t i = 2;
-  while (i < list_terms.size()) {
-    const size_t doc_id = std::stoi(list_terms[i]);
-    i++;
-    const size_t term_frequency = std::stoi(list_terms[i]);
-    term_infos_.entries_[term][doc_id].push_back(term_frequency);
-    term_infos_.entries_[term][doc_id].push_back(doc_frequency);
-    i += term_frequency + 1;
+  while (std::getline(file, term_entries)) {
+    std::vector<std::string> list_terms;
+    parser::delete_spaces(list_terms, term_entries);
+    const std::string word = list_terms[0];
+    const size_t doc_frequency = std::stoi(list_terms[1]);
+    size_t i = 2;
+    while (i < list_terms.size()) {
+      const size_t doc_id = std::stoi(list_terms[i]);
+      i++;
+      const size_t term_frequency = std::stoi(list_terms[i]);
+      term_infos_.entries_[word][doc_id].push_back(term_frequency);
+      term_infos_.entries_[word][doc_id].push_back(doc_frequency);
+      i += term_frequency + 1;
+    }
   }
 
   return term_infos_;

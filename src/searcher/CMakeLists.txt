@@ -32,6 +32,7 @@ target_link_libraries(
   GTest::gtest_main
   searcher
   parser
+  indexer
 )
 
 include(GoogleTest)
