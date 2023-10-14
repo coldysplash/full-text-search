@@ -12,11 +12,10 @@ TEST(test_modify_text, parser_test) {
 }
 
 TEST(test_delete_spaces, parser_test) {
-  std::vector<std::string> list_strings;
   std::string text = "hello my name is tony";
   std::vector<std::string> expected_list_strings = {
       "hello", "my", "name", "is", "tony"};
-  parser::delete_spaces(list_strings, text);
+  std::vector<std::string> list_strings = parser::delete_spaces(text);
   ASSERT_EQ(list_strings, expected_list_strings);
 }
 

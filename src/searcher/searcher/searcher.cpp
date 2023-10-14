@@ -9,10 +9,11 @@
 #include <string>
 #include <vector>
 
+namespace {
 double tf_idf(const double tf, const double df, const double N) {
-  const double result = tf * log(N / df);
-  return result;
+  return tf * log(N / df);
 }
+} // namespace
 
 namespace searcher {
 
@@ -28,7 +29,7 @@ Result search(const std::string &query, TextIndexAccessor &index_accessor) {
     }
   }
 
-  Result result;
+  std::map<size_t, double> tmp_results;
   const auto total_docs = static_cast<double>(index_accessor.total_docs());
   for (const auto &[key, value] : term_info.entries_) {
     for (const auto &[k, v] : value) {
@@ -36,25 +37,24 @@ Result search(const std::string &query, TextIndexAccessor &index_accessor) {
       const auto tf = static_cast<double>(v[0]);
       const auto df = static_cast<double>(v[1]);
       const double tmp_res = tf_idf(tf, df, total_docs);
-      result.results_[doc_id] += tmp_res;
+      tmp_results[doc_id] += tmp_res;
     }
   }
 
-  sort_results(result);
+  Result finish_results = sort_results(tmp_results);
 
-  return result;
+  return finish_results;
 }
 
 TermInfos TextIndexAccessor::get_term_infos(const std::string &term) {
 
   std::string hash_term;
   picosha2::hash256_hex_string(term, hash_term);
-  std::ifstream file(path_ / "index/entries" / hash_term.substr(0, 6));
+  std::ifstream file(path_ / "index" / "entries" / hash_term.substr(0, 6));
 
   std::string term_entries;
   while (std::getline(file, term_entries)) {
-    std::vector<std::string> list_terms;
-    parser::delete_spaces(list_terms, term_entries);
+    std::vector<std::string> list_terms = parser::delete_spaces(term_entries);
     const std::string word = list_terms[0];
     const size_t doc_frequency = std::stoi(list_terms[1]);
     size_t i = 2;
@@ -71,31 +71,32 @@ TermInfos TextIndexAccessor::get_term_infos(const std::string &term) {
   return term_infos_;
 }
 
-std::string TextIndexAccessor::load_document(size_t document_id) {
+std::string TextIndexAccessor::load_document(size_t document_id) const {
   std::string text;
-  std::ifstream file(path_ / "index/docs" / std::to_string(document_id));
+  std::ifstream file(path_ / "index" / "docs" / std::to_string(document_id));
   std::getline(file, text);
 
   return text;
 }
 
-size_t TextIndexAccessor::total_docs() {
+size_t TextIndexAccessor::total_docs() const {
   size_t total_docs = 0;
-  std::ifstream file(path_ / "index/docs" / "total_docs");
+  std::ifstream file(path_ / "index" / "docs" / "total_docs");
   file >> total_docs;
 
   return total_docs;
 }
 
-void sort_results(Result &result) {
+Result sort_results(const std::map<size_t, double> &tmp_results) {
+  Result sorted;
   std::copy(
-      result.results_.begin(),
-      result.results_.end(),
-      std::back_inserter<std::vector<pair>>(result.sorted_results_));
+      tmp_results.begin(),
+      tmp_results.end(),
+      std::back_inserter<std::vector<pair>>(sorted.results_));
 
   std::sort(
-      result.sorted_results_.begin(),
-      result.sorted_results_.end(),
+      sorted.results_.begin(),
+      sorted.results_.end(),
       [](const pair &l, const pair &r) {
         if (l.second != r.second) {
           return l.second > r.second;
@@ -104,6 +105,7 @@ void sort_results(Result &result) {
         return l.first > r.first;
       });
 
-} /*https://www.techiedelight.com/ru/sort-map-values-cpp/*/
+  return sorted;
+}
 
 } // namespace searcher

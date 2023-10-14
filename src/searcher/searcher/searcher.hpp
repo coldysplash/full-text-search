@@ -12,8 +12,7 @@ namespace searcher {
 using pair = std::pair<size_t, double>;
 
 struct Result {
-  std::map<size_t, double> results_;
-  std::vector<pair> sorted_results_;
+  std::vector<pair> results_;
 };
 
 using Entries = std::map<std::string, std::map<size_t, std::vector<size_t>>>;
@@ -26,10 +25,10 @@ using Config = parser::ParserOpts;
 
 class IndexAccessor {
 public:
-  virtual Config config() = 0;
+  virtual Config config() const = 0;
   virtual TermInfos get_term_infos(const std::string &term) = 0;
-  virtual std::string load_document(size_t document_id) = 0;
-  virtual size_t total_docs() = 0;
+  virtual std::string load_document(size_t document_id) const = 0;
+  virtual size_t total_docs() const = 0;
   virtual ~IndexAccessor() = default;
 };
 
@@ -43,16 +42,14 @@ public:
   TextIndexAccessor(std::filesystem::path path, parser::ParserOpts parser_opts)
       : path_(path), parser_opts_(std::move(parser_opts)) {}
 
-  Config config() override { return parser_opts_; }
+  Config config() const override { return parser_opts_; }
   TermInfos get_term_infos(const std::string &term) override;
-  std::string load_document(size_t document_id) override;
-  size_t total_docs() override;
+  std::string load_document(size_t document_id) const override;
+  size_t total_docs() const override;
 };
 
 Result search(const std::string &query, TextIndexAccessor &index_accessor);
 
-void sort_results(Result &result);
+Result sort_results(const std::map<size_t, double> &tmp_results);
 
 } // namespace searcher
-
-double tf_idf(const double tf, const double df, const double N);

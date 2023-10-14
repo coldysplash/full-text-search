@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
               << " score "
               << "      text" << '\n';
 
-    for (auto const &pair : result.sorted_results_) {
+    for (auto const &pair : result.results_) {
       const std::string text = accessor.load_document(pair.first);
       std::cout << pair.first << "  " << pair.second << "    " << text << '\n';
     }

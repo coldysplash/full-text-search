@@ -19,8 +19,9 @@ void normalize_text(std::string &pars_string) {
       pars_string.begin(), pars_string.end(), pars_string.begin(), tolower);
 }
 
-void delete_spaces(
-    std::vector<std::string> &list_strings, std::string &pars_string) {
+std::vector<std::string> delete_spaces(std::string &pars_string) {
+
+  std::vector<std::string> list_strings;
 
   size_t start = 0;
   size_t end = 0;
@@ -30,6 +31,8 @@ void delete_spaces(
     end = pars_string.find(' ', start);
     list_strings.push_back(pars_string.substr(start, end - start));
   }
+
+  return list_strings;
 }
 
 void delete_stop_words(
@@ -84,7 +87,7 @@ void parse_text(
   std::vector<std::string> list_strings;
 
   normalize_text(pars_string);
-  delete_spaces(list_strings, pars_string);
+  list_strings = delete_spaces(pars_string);
   delete_stop_words(list_strings, parser_opts);
   split_to_ngrams(ngram_words, list_strings, parser_opts);
 }

@@ -13,8 +13,7 @@ struct ParserOpts {
 };
 
 void normalize_text(std::string &pars_string);
-void delete_spaces(
-    std::vector<std::string> &list_strings, std::string &pars_string);
+std::vector<std::string> delete_spaces(std::string &pars_string);
 void delete_stop_words(
     std::vector<std::string> &list_strings, const ParserOpts &parser_opts);
 void split_to_ngrams(
