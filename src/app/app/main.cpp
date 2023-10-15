@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     const indexer::Index doc_index = index.index();
     indexer::TextIndexWriter w;
     const std::filesystem::path path = ".";
-    w.write(path, doc_index);
+    w.write(path, doc_index, false);
 
     /*search*/
     const std::string query = "Hello World";
@@ -52,9 +52,9 @@ int main(int argc, char **argv) {
               << " score "
               << "      text" << '\n';
 
-    for (auto const &pair : result.results_) {
-      const std::string text = accessor.load_document(pair.first);
-      std::cout << pair.first << "  " << pair.second << "    " << text << '\n';
+    for (auto const &[doc_id, score] : result.results_) {
+      const std::string text = accessor.load_document(doc_id);
+      std::cout << doc_id << "  " << score << "    " << text << '\n';
     }
     std::cout << std::endl;
 

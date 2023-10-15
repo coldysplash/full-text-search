@@ -87,22 +87,20 @@ size_t TextIndexAccessor::total_docs() const {
 
 Result sort_results(const std::map<size_t, double> &tmp_results) {
   Result sorted;
-  // std::copy(
-  //     tmp_results.begin(),
-  //     tmp_results.end(),
-  //     std::back_inserter<std::vector<IdScore>>(sorted.results_));
+  for (const auto &[doc_id, score] : tmp_results) {
+    sorted.results_.push_back({doc_id, score});
+  }
 
-  tmp_results.size();
-  // std::sort(
-  //     sorted.results_.begin(),
-  //     sorted.results_.end(),
-  //     [](const pair &l, const pair &r) {
-  //       if (l.second != r.second) {
-  //         return l.second > r.second;
-  //       }
+  std::sort(
+      sorted.results_.begin(),
+      sorted.results_.end(),
+      [](const IdScore &l, const IdScore &r) {
+        if (l.score != r.score) {
+          return l.score > r.score;
+        }
 
-  //       return l.first > r.first;
-  //     });
+        return l.doc_id > r.doc_id;
+      });
 
   return sorted;
 }
