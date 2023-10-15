@@ -21,17 +21,19 @@ using fs_path = std::filesystem::path;
 
 class IndexWriter {
 public:
-  virtual void write(const fs_path &path, Index const &index) = 0;
+  virtual void
+  write(const fs_path &path, Index const &index, bool testflag) = 0;
   virtual ~IndexWriter() = default;
 };
 
 class TextIndexWriter : public IndexWriter {
 public:
-  void write(const fs_path &path, Index const &index) override;
+  void write(const fs_path &path, Index const &index, bool testflag) override;
 };
 
 void write_direct_index(const fs_path &path, Index const &index);
-void write_reverse_index(const fs_path &path, Index const &index);
+void write_reverse_index(
+    const fs_path &path, Index const &index, bool testflag);
 
 class IndexBuilder {
 private:
@@ -45,5 +47,7 @@ public:
   void add_document(size_t document_id, const std::string &text);
   Index index() const { return index_; };
 };
+
+std::string hashing_term(const std::string &term, bool testflag);
 
 } // namespace indexer

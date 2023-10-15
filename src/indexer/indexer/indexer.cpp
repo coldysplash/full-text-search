@@ -26,10 +26,12 @@ void IndexBuilder::add_document(size_t document_id, const std::string &text) {
   }
 }
 
-void TextIndexWriter::write(const fs_path &path, Index const &index) {
+void TextIndexWriter::write(
+    const fs_path &path, Index const &index, bool testflag) {
+
   std::filesystem::create_directories(path / "index");
   write_direct_index(path, index);
-  write_reverse_index(path, index);
+  write_reverse_index(path, index, testflag);
 }
 
 void write_direct_index(const fs_path &path, Index const &index) {
@@ -47,14 +49,15 @@ void write_direct_index(const fs_path &path, Index const &index) {
   }
 }
 
-void write_reverse_index(const fs_path &path, Index const &index) {
+void write_reverse_index(
+    const fs_path &path, Index const &index, bool testflag) {
+
   if (!index.entries.empty()) {
     const fs_path path_entries = path / "index/entries";
     std::filesystem::create_directories(path_entries);
     for (const auto &[term, term_info] : index.entries) {
-      std::string hash_term;
-      picosha2::hash256_hex_string(term, hash_term);
-      const fs_path path_entries_hash = path_entries / hash_term.substr(0, 6);
+      const fs_path path_entries_hash =
+          path_entries / hashing_term(term, testflag);
       const std::ifstream file(path_entries_hash);
       std::string entries;
       entries.append(term).append(" ");
@@ -75,6 +78,16 @@ void write_reverse_index(const fs_path &path, Index const &index) {
       }
     }
   }
+}
+
+std::string hashing_term(const std::string &term, bool testflag) {
+  if (!testflag) {
+    std::string hashed_term;
+    picosha2::hash256_hex_string(term, hashed_term);
+    return hashed_term.substr(0, 6);
+  }
+
+  return "1";
 }
 
 } // namespace indexer

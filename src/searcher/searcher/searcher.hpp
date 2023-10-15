@@ -9,10 +9,13 @@
 
 namespace searcher {
 
-using pair = std::pair<size_t, double>;
+struct IdScore {
+  size_t doc_id;
+  double score;
+};
 
 struct Result {
-  std::vector<pair> results_;
+  std::vector<IdScore> results_;
 };
 
 using Entries = std::map<std::string, std::map<size_t, std::vector<size_t>>>;
@@ -26,7 +29,7 @@ using Config = parser::ParserOpts;
 class IndexAccessor {
 public:
   virtual Config config() const = 0;
-  virtual TermInfos get_term_infos(const std::string &term) = 0;
+  virtual TermInfos get_term_infos(const std::string &term, bool testflag) = 0;
   virtual std::string load_document(size_t document_id) const = 0;
   virtual size_t total_docs() const = 0;
   virtual ~IndexAccessor() = default;
@@ -43,7 +46,7 @@ public:
       : path_(path), parser_opts_(std::move(parser_opts)) {}
 
   Config config() const override { return parser_opts_; }
-  TermInfos get_term_infos(const std::string &term) override;
+  TermInfos get_term_infos(const std::string &term, bool testflag) override;
   std::string load_document(size_t document_id) const override;
   size_t total_docs() const override;
 };

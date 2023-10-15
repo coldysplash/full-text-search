@@ -10,9 +10,9 @@
 #include <vector>
 
 namespace {
-double tf_idf(const double tf, const double df, const double N) {
-  return tf * log(N / df);
-}
+
+double tf_idf(double tf, double df, double N) { return tf * log(N / df); }
+
 } // namespace
 
 namespace searcher {
@@ -25,11 +25,11 @@ Result search(const std::string &query, TextIndexAccessor &index_accessor) {
   TermInfos term_info;
   for (const auto &items : terms) {
     for (const auto &term : items) {
-      term_info = index_accessor.get_term_infos(term);
+      term_info = index_accessor.get_term_infos(term, false);
     }
   }
 
-  std::map<size_t, double> tmp_results;
+  std::map<size_t, double> results;
   const auto total_docs = static_cast<double>(index_accessor.total_docs());
   for (const auto &[key, value] : term_info.entries_) {
     for (const auto &[k, v] : value) {
@@ -37,20 +37,18 @@ Result search(const std::string &query, TextIndexAccessor &index_accessor) {
       const auto tf = static_cast<double>(v[0]);
       const auto df = static_cast<double>(v[1]);
       const double tmp_res = tf_idf(tf, df, total_docs);
-      tmp_results[doc_id] += tmp_res;
+      results[doc_id] += tmp_res;
     }
   }
 
-  Result finish_results = sort_results(tmp_results);
-
-  return finish_results;
+  return sort_results(results);
 }
 
-TermInfos TextIndexAccessor::get_term_infos(const std::string &term) {
+TermInfos
+TextIndexAccessor::get_term_infos(const std::string &term, bool testflag) {
 
-  std::string hash_term;
-  picosha2::hash256_hex_string(term, hash_term);
-  std::ifstream file(path_ / "index" / "entries" / hash_term.substr(0, 6));
+  std::ifstream file(
+      path_ / "index" / "entries" / indexer::hashing_term(term, testflag));
 
   std::string term_entries;
   while (std::getline(file, term_entries)) {
@@ -89,21 +87,22 @@ size_t TextIndexAccessor::total_docs() const {
 
 Result sort_results(const std::map<size_t, double> &tmp_results) {
   Result sorted;
-  std::copy(
-      tmp_results.begin(),
-      tmp_results.end(),
-      std::back_inserter<std::vector<pair>>(sorted.results_));
+  // std::copy(
+  //     tmp_results.begin(),
+  //     tmp_results.end(),
+  //     std::back_inserter<std::vector<IdScore>>(sorted.results_));
 
-  std::sort(
-      sorted.results_.begin(),
-      sorted.results_.end(),
-      [](const pair &l, const pair &r) {
-        if (l.second != r.second) {
-          return l.second > r.second;
-        }
+  tmp_results.size();
+  // std::sort(
+  //     sorted.results_.begin(),
+  //     sorted.results_.end(),
+  //     [](const pair &l, const pair &r) {
+  //       if (l.second != r.second) {
+  //         return l.second > r.second;
+  //       }
 
-        return l.first > r.first;
-      });
+  //       return l.first > r.first;
+  //     });
 
   return sorted;
 }
