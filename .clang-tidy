@@ -10,7 +10,7 @@ Checks: >
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
   -cppcoreguidelines-owning-memory,
-# -google-runtime-references,
+  -google-runtime-references,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-avoid-magic-numbers,
   -readability-identifier-length,
