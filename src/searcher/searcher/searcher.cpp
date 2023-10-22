@@ -17,40 +17,42 @@ double tf_idf(double tf, double df, double N) { return tf * log(N / df); }
 
 namespace searcher {
 
-Result search(const std::string &query, TextIndexAccessor &index_accessor) {
+Result
+search(const std::string &query, const TextIndexAccessor &index_accessor) {
 
   std::vector<std::vector<std::string>> terms;
   parser::parse_text(query, terms, index_accessor.config());
 
   TermInfos term_info;
-  for (const auto &items : terms) {
-    for (const auto &term : items) {
-      term_info = index_accessor.get_term_infos(term, false);
-    }
-  }
-
   std::map<size_t, double> results;
   const auto total_docs = static_cast<double>(index_accessor.total_docs());
-  for (const auto &[key, value] : term_info.entries_) {
-    for (const auto &[k, v] : value) {
-      const size_t doc_id = k;
-      const auto tf = static_cast<double>(v[0]);
-      const auto df = static_cast<double>(v[1]);
-      const double tmp_res = tf_idf(tf, df, total_docs);
-      results[doc_id] += tmp_res;
+
+  for (const auto &t_info : terms) {
+    for (const auto &term : t_info) {
+      term_info = index_accessor.get_term_infos(term, false);
+      for (const auto &[term, t_infos] : term_info.entries_) {
+        for (const auto &[doc_id, doc_id_info] : t_infos) {
+          const size_t document_id = doc_id;
+          const auto tf = static_cast<double>(doc_id_info[0]);
+          const auto df = static_cast<double>(doc_id_info[1]);
+          const double tmp_res = tf_idf(tf, df, total_docs);
+          results[document_id] += tmp_res;
+        }
+      }
     }
   }
 
   return sort_results(results);
 }
 
-TermInfos
-TextIndexAccessor::get_term_infos(const std::string &term, bool testflag) {
+TermInfos TextIndexAccessor::get_term_infos(
+    const std::string &term, bool testflag) const {
 
   std::ifstream file(
       path_ / "index" / "entries" / indexer::hashing_term(term, testflag));
 
   std::string term_entries;
+  TermInfos term_infos;
   while (std::getline(file, term_entries)) {
     std::vector<std::string> list_terms = parser::delete_spaces(term_entries);
     const std::string word = list_terms[0];
@@ -60,13 +62,13 @@ TextIndexAccessor::get_term_infos(const std::string &term, bool testflag) {
       const size_t doc_id = std::stoi(list_terms[i]);
       i++;
       const size_t term_frequency = std::stoi(list_terms[i]);
-      term_infos_.entries_[word][doc_id].push_back(term_frequency);
-      term_infos_.entries_[word][doc_id].push_back(doc_frequency);
+      term_infos.entries_[word][doc_id].push_back(term_frequency);
+      term_infos.entries_[word][doc_id].push_back(doc_frequency);
       i += term_frequency + 1;
     }
   }
 
-  return term_infos_;
+  return term_infos;
 }
 
 std::string TextIndexAccessor::load_document(size_t document_id) const {

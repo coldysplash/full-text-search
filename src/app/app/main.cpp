@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 
     /*search*/
     const std::string query = "Hello World";
-    searcher::TextIndexAccessor accessor(path, parser_opts);
+    const searcher::TextIndexAccessor accessor(path, parser_opts);
     const searcher::Result result = searcher::search(query, accessor);
 
     std::cout << "Query: " << query << '\n';
