@@ -58,24 +58,19 @@ void write_reverse_index(
     for (const auto &[term, term_info] : index.entries) {
       const fs_path path_entries_hash =
           path_entries / hashing_term(term, testflag);
-      const std::ifstream file(path_entries_hash);
-      std::string entries;
-      entries.append(term).append(" ");
-      entries.append(std::to_string(term_info.size())).append(" ");
-      for (const auto &[doc_id, info] : term_info) {
-        entries.append(std::to_string(doc_id)).append(" ");
-        entries.append(std::to_string(info.size())).append(" ");
-        for (const auto &i : info) {
-          entries.append(std::to_string(i)).append(" ");
+
+      std::ofstream file(path_entries_hash, std::ios::app);
+
+      file << term << ' ';
+      file << term_info.size() << ' ';
+      for (const auto &[doc_id, info_id] : term_info) {
+        file << doc_id << ' ';
+        file << info_id.size() << ' ';
+        for (const auto &pos_term : info_id) {
+          file << pos_term << ' ';
         }
       }
-      if (!file.is_open()) {
-        std::ofstream file(path_entries_hash);
-        file << entries;
-      } else {
-        std::ofstream file(path_entries_hash, std::ios::app);
-        file << '\n' << entries;
-      }
+      file << '\n';
     }
   }
 }

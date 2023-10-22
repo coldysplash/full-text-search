@@ -54,6 +54,9 @@ TermInfos TextIndexAccessor::get_term_infos(
   std::string term_entries;
   TermInfos term_infos;
   while (std::getline(file, term_entries)) {
+    if (term_entries.empty()) {
+      continue;
+    }
     std::vector<std::string> list_terms = parser::delete_spaces(term_entries);
     const std::string word = list_terms[0];
     const size_t doc_frequency = std::stoi(list_terms[1]);
