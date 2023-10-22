@@ -10,9 +10,9 @@ int main(int argc, char **argv) {
   index.add_document(100, "Hello World");
   index.add_document(102, "Hello Earth");
   const indexer::Index doc_index = index.index();
-  indexer::TextIndexWriter w;
-  const std::filesystem::path path = ".";
-  w.write(path, doc_index, false);
+  indexer::TextIndexWriter docs;
+  const std::filesystem::path path = "./searchtests";
+  docs.write(path, doc_index, false);
 
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
@@ -20,15 +20,15 @@ int main(int argc, char **argv) {
 
 TEST(test_search, Searcher_test) {
   parser::ParserOpts parser_opts;
-  const std::filesystem::path path = ".";
+  const std::filesystem::path path = "./searchtests";
   const std::string query = "World";
   const searcher::TextIndexAccessor accessor(path, parser_opts);
   const searcher::Result result = searcher::search(query, accessor);
 }
 
 TEST(test_get_term_infos, TextIndexAccessor) {
-  std::filesystem::create_directories("./indextest");
   const std::filesystem::path path = "./indextest";
+  std::filesystem::create_directories(path);
   parser::ParserOpts parser_opts;
   indexer::IndexBuilder index(parser_opts);
   index.add_document(100, "World");
@@ -50,13 +50,13 @@ TEST(test_get_term_infos, TextIndexAccessor) {
       }
     }
   }
-  std::cout << term_infos_exit << '\n';
   std::string terminfos_expected = "wor 100 1 1 worl 100 1 1 world 100 1 1 ";
   ASSERT_EQ(term_infos_exit, terminfos_expected);
+  std::uintmax_t n{std::filesystem::remove_all(path)};
 }
 
 TEST(test_load_document, TextIndexAccessor) {
-  const std::filesystem::path path = ".";
+  const std::filesystem::path path = "./searchtests";
   parser::ParserOpts parser_opts;
   const searcher::TextIndexAccessor a(path, parser_opts);
   std::string document = a.load_document(100);
@@ -65,7 +65,7 @@ TEST(test_load_document, TextIndexAccessor) {
 }
 
 TEST(test_total_docs, TextIndexAccessor) {
-  const std::filesystem::path path = ".";
+  const std::filesystem::path path = "./searchtests";
   parser::ParserOpts parser_opts;
   const searcher::TextIndexAccessor a(path, parser_opts);
 
