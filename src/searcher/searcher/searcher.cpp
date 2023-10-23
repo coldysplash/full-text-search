@@ -14,6 +14,22 @@ namespace {
 
 double tf_idf(double tf, double df, double N) { return tf * log(N / df); }
 
+void score(
+    const searcher::TermInfos &term_info,
+    double total_docs,
+    std::map<size_t, double> &results) {
+
+  for (const auto &[term, t_infos] : term_info.entries_) {
+    for (const auto &[doc_id, doc_id_info] : t_infos) {
+      const size_t document_id = doc_id;
+      const auto tf = static_cast<double>(doc_id_info[0]);
+      const auto df = static_cast<double>(doc_id_info[1]);
+      const double tmp_res = tf_idf(tf, df, total_docs);
+      results[document_id] += tmp_res;
+    }
+  }
+}
+
 } // namespace
 
 namespace searcher {
@@ -31,15 +47,7 @@ search(const std::string &query, const TextIndexAccessor &index_accessor) {
   for (const auto &t_info : terms) {
     for (const auto &term : t_info) {
       term_info = index_accessor.get_term_infos(term, false);
-      for (const auto &[term, t_infos] : term_info.entries_) {
-        for (const auto &[doc_id, doc_id_info] : t_infos) {
-          const size_t document_id = doc_id;
-          const auto tf = static_cast<double>(doc_id_info[0]);
-          const auto df = static_cast<double>(doc_id_info[1]);
-          const double tmp_res = tf_idf(tf, df, total_docs);
-          results[document_id] += tmp_res;
-        }
-      }
+      score(term_info, total_docs, results);
     }
   }
 
