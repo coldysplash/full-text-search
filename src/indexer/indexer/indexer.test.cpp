@@ -3,8 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include <iostream>
-
 TEST(test_add_document, IndexBuilder_test) {
 
   parser::ParserOpts parser_opts;
