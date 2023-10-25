@@ -21,4 +21,16 @@ struct IndexConfig {
 ParsedCsvDoc parse_csv_file(const fs_path &path_to_csv);
 void index_command(const IndexConfig &options);
 
+class SearchCommand {
+private:
+  fs_path path_;
+  parser::ParserOpts parses_opts_;
+
+public:
+  SearchCommand(fs_path path_to_index, parser::ParserOpts parser_opts)
+      : path_(path_to_index), parses_opts_(parser_opts) {}
+
+  void search_command(const std::string &query) const;
+};
+
 } // namespace driver

@@ -50,4 +50,21 @@ void index_command(const IndexConfig &options) {
   to_write.write(options.path_to_index_, index_docs, false);
 }
 
+void SearchCommand::search_command(const std::string &query) const {
+
+  const searcher::TextIndexAccessor accessor(path_, parses_opts_);
+  const searcher::Result result = searcher::search(query, accessor);
+
+  std::cout << "Query: " << query << "\n\n";
+  std::cout << "id\t"
+            << "score\t"
+            << "\ttext" << '\n';
+
+  for (auto const &[doc_id, score] : result.results_) {
+    const std::string text = accessor.load_document(doc_id);
+    std::cout << doc_id << '\t' << score << "\t\t" << text << '\n';
+  }
+  std::cout << std::endl;
+}
+
 } // namespace driver

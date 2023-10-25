@@ -36,6 +36,10 @@ int main(int argc, char **argv) {
 
     driver::index_command(index_options);
 
+    const driver::SearchCommand search(".", parser_opts);
+    const std::string query = "Harry Potter";
+    search.search_command(query);
+
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
     std::cerr << "Invalid input file!" << '\n';
