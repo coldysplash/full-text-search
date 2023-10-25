@@ -18,6 +18,7 @@ target_link_libraries(
     parser
     indexer
     searcher
+    driver
     CLI11
     nlohmann_json::nlohmann_json
 )

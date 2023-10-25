@@ -1,4 +1,5 @@
 #include <common/parser.hpp>
+#include <driver/driver.hpp>
 #include <indexer/indexer.hpp>
 #include <searcher/searcher.hpp>
 
@@ -14,7 +15,7 @@ using json = nlohmann::json;
 
 int main(int argc, char **argv) {
   try {
-    CLI::App app("Parser");
+    CLI::App app("Fts");
     std::string filename = "config.json";
     app.add_option("--config", filename, "<path> (default=config.json)");
 
@@ -28,32 +29,12 @@ int main(int argc, char **argv) {
     parser_opts.ngram_min_length_ = data["ngram_min_length"];
     parser_opts.ngram_max_length_ = data["ngram_max_length"];
 
-    /*indexer*/
-    indexer::IndexBuilder index(parser_opts);
-    index.add_document(100, "Hello World");
-    index.add_document(101, "Bye World");
-    index.add_document(102, "Hello Earth");
+    driver::IndexConfig index_options;
+    index_options.parser_opts_ = parser_opts;
+    index_options.path_to_csv_ = "books.csv";
+    index_options.path_to_index_ = ".";
 
-    const indexer::Index doc_index = index.index();
-    indexer::TextIndexWriter w;
-    const std::filesystem::path path = ".";
-    w.write(path, doc_index, false);
-
-    /*search*/
-    const std::string query = "Hello World";
-    const searcher::TextIndexAccessor accessor(path, parser_opts);
-    const searcher::Result result = searcher::search(query, accessor);
-
-    std::cout << "Query: " << query << '\n';
-    std::cout << " id "
-              << " score "
-              << "      text" << '\n';
-
-    for (auto const &[doc_id, score] : result.results_) {
-      const std::string text = accessor.load_document(doc_id);
-      std::cout << doc_id << "  " << score << "    " << text << '\n';
-    }
-    std::cout << std::endl;
+    driver::index_command(index_options);
 
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
