@@ -7,7 +7,7 @@
 
 namespace driver {
 
-void index_command(const IndexConfig &options) {
+void index_build_and_write(const IndexConfig &options) {
 
   const parser::ParsedCsvDoc parsed_docs =
       parser::parse_csv_file(options.path_to_csv_);
@@ -22,12 +22,13 @@ void index_command(const IndexConfig &options) {
   to_write.write(options.path_to_index_, index_docs, false);
 }
 
-void SearchCommand::search_and_print(const std::string &query) const {
+void search_and_print(const SearchConfig &options) {
 
-  const searcher::TextIndexAccessor accessor(path_, parses_opts_);
-  const searcher::Result result = searcher::search(query, accessor);
+  const searcher::TextIndexAccessor accessor(
+      options.path_to_index_, options.parser_opts_);
+  const searcher::Result result = searcher::search(options.query_, accessor);
 
-  std::cout << "Query: " << query << "\n\n";
+  std::cout << "Query: " << options.query_ << "\n\n";
   std::cout << "id\t"
             << "score\t"
             << "\ttext" << '\n';

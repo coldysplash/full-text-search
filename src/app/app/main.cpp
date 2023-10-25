@@ -15,9 +15,24 @@ using json = nlohmann::json;
 
 int main(int argc, char **argv) {
   try {
-    CLI::App app("Fts");
+    CLI::App app("Full-Text-Searcher");
+    app.set_help_all_flag("--help-all", "Expand all help");
+
     std::string filename = "config.json";
     app.add_option("--config", filename, "<path> (default=config.json)");
+
+    CLI::App *index = app.add_subcommand("index", "");
+    CLI::App *search = app.add_subcommand("search", "");
+    app.require_subcommand(); // 1 or more
+
+    driver::fs_path path_csv;
+    driver::fs_path path_index;
+    index->add_option("--csv", path_csv, "Path to .csv file")->required();
+    index->add_option("--index", path_index, "Path to index save")->required();
+
+    search->add_option("--index", path_index, "Path to index")->required();
+    std::string query_text;
+    search->add_option("--query", query_text, "Query text");
 
     CLI11_PARSE(app, argc, argv);
 
@@ -31,14 +46,24 @@ int main(int argc, char **argv) {
 
     driver::IndexConfig index_options;
     index_options.parser_opts_ = parser_opts;
-    index_options.path_to_csv_ = "books.csv";
-    index_options.path_to_index_ = ".";
+    index_options.path_to_csv_ = path_csv;
+    index_options.path_to_index_ = path_index;
 
-    driver::index_command(index_options);
+    driver::SearchConfig search_options;
+    search_options.parser_opts_ = parser_opts;
+    search_options.path_to_index_ = path_index;
 
-    const driver::SearchCommand search(".", parser_opts);
-    const std::string query = "Harry Potter";
-    search.search_command(query);
+    if (index->parsed()) {
+      driver::index_build_and_write(index_options);
+    }
+
+    if (search->parsed() && !query_text.empty()) {
+      search_options.query_ = query_text;
+      driver::search_and_print(search_options);
+    } else if (search->parsed() && query_text.empty()) {
+      search_options.query_ = "Harry Potter Chamber";
+      driver::search_and_print(search_options);
+    }
 
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
