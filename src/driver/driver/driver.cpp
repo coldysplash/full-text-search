@@ -44,10 +44,22 @@ void search_and_print(const SearchConfig &options) {
       options.path_to_index_, options.parser_opts_);
 
   if (options.query_.empty()) {
-    /* Interactive input */
+    /* interactive input */
+    while (true) {
+      replxx::Replxx sreplx;
+      const std::string query = sreplx.input(">  ");
+      if (query.empty()) {
+        break;
+      }
+      sreplx.clear_screen();
+      const searcher::Result result = searcher::search(query, accessor);
+      std::cout << ">  " << query << "\n\n";
+      print_search_result(result, accessor);
+    }
   } else {
+    /* single request */
     const searcher::Result result = searcher::search(options.query_, accessor);
-    std::cout << "Query: " << options.query_ << "\n\n";
+    std::cout << ">  " << options.query_ << "\n\n";
     print_search_result(result, accessor);
   }
 }
