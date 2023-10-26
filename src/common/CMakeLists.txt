@@ -1,4 +1,5 @@
 set(target_name parser)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 add_library(${target_name} STATIC 
     common/parser.cpp
@@ -16,6 +17,7 @@ target_include_directories(
 target_link_libraries(
     ${target_name}
     PRIVATE
+    nlohmann_json::nlohmann_json
 )
 
 add_executable(

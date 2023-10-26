@@ -1,5 +1,7 @@
 #include <common/parser.hpp>
 
+#include <nlohmann/json.hpp>
+
 #include <algorithm>
 #include <cctype>
 #include <fstream>
@@ -89,6 +91,19 @@ void parse_text(
   list_strings = delete_spaces(pars_string);
   delete_stop_words(list_strings, parser_opts);
   split_to_ngrams(ngram_words, list_strings, parser_opts);
+}
+
+ParserOpts parse_config(const std::string &filename) {
+  using json = nlohmann::json;
+
+  std::ifstream file(filename);
+  json data = json::parse(file);
+  parser::ParserOpts parser_opts;
+  parser_opts.stop_words_ = data["stop_words"];
+  parser_opts.ngram_min_length_ = data["ngram_min_length"];
+  parser_opts.ngram_max_length_ = data["ngram_max_length"];
+
+  return parser_opts;
 }
 
 ParsedCsvDoc parse_csv_file(const fs_path &path_to_csv) {

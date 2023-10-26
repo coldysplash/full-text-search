@@ -30,6 +30,7 @@ void parse_text(
     std::vector<std::vector<std::string>> &ngram_words,
     const ParserOpts &parser_opts);
 
+ParserOpts parse_config(const std::string &filename);
 ParsedCsvDoc parse_csv_file(const fs_path &path_to_csv);
 
 } // namespace parser
