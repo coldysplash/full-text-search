@@ -1,5 +1,4 @@
 set(target_name app)
-set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 add_executable(${target_name})
 
@@ -20,5 +19,4 @@ target_link_libraries(
     searcher
     driver
     CLI11
-    nlohmann_json::nlohmann_json
 )

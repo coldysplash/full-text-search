@@ -20,4 +20,6 @@ target_link_libraries(
       parser
       indexer
       searcher
+      CLI11
+      replxx
 )

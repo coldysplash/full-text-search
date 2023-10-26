@@ -1,6 +1,9 @@
 #pragma once
 
 #include <common/parser.hpp>
+#include <searcher/searcher.hpp>
+
+#include <CLI/CLI.hpp>
 
 #include <filesystem>
 #include <map>
@@ -23,6 +26,11 @@ struct SearchConfig {
 };
 
 void index_build_and_write(const IndexConfig &options);
+void print_search_result(
+    const searcher::Result &result, const searcher::IndexAccessor &accessor);
 void search_and_print(const SearchConfig &options);
+
+CLI::App *create_indexer(CLI::App &app, IndexConfig &options);
+CLI::App *create_searcher(CLI::App &app, SearchConfig &options);
 
 } // namespace driver
