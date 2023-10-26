@@ -10,3 +10,6 @@
 [submodule "external/PicoSHA2"]
 	path = external/PicoSHA2
 	url = https://github.com/okdshin/PicoSHA2
+[submodule "external/replxx"]
+	path = external/replxx
+	url = https://github.com/AmokHuginnsson/replxx
