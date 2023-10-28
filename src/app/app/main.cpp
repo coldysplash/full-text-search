@@ -1,15 +1,14 @@
 #include <common/parser.hpp>
 #include <indexer/indexer.hpp>
+#include <searcher/searcher.hpp>
 
 #include <CLI/CLI.hpp>
 #include <nlohmann/json.hpp>
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 
 using json = nlohmann::json;
 
@@ -23,36 +22,38 @@ int main(int argc, char **argv) {
 
     std::ifstream file(filename);
     json data = json::parse(file);
-    const std::unordered_set<std::string> stop_words = data["stop_words"];
-    const uint16_t ngram_min_length = data["ngram_min_length"];
-    const uint16_t ngram_max_length = data["ngram_max_length"];
 
-    indexer::IndexBuilder index(
-        {ngram_min_length, ngram_max_length}, stop_words);
-    index.add_document(100, "The Matrix matrix");
-    index.add_document(101, "The Matrix Reloaded");
-    index.add_document(102, "The Matrix Revolutions");
+    parser::ParserOpts parser_opts;
+    parser_opts.stop_words_ = data["stop_words"];
+    parser_opts.ngram_min_length_ = data["ngram_min_length"];
+    parser_opts.ngram_max_length_ = data["ngram_max_length"];
+
+    /*indexer*/
+    indexer::IndexBuilder index(parser_opts);
+    index.add_document(100, "Hello World");
+    index.add_document(101, "Bye World");
+    index.add_document(102, "Hello Earth");
 
     const indexer::Index doc_index = index.index();
-
     indexer::TextIndexWriter w;
-    std::string path = "index";
-    w.write(path, doc_index);
+    const std::filesystem::path path = ".";
+    w.write(path, doc_index, false);
 
-    for (const auto &[key, value] : doc_index.entries) {
-      std::cout << key << ' ';
-      for (const auto &[k, v] : value) {
-        std::cout << k << ' ';
-        for (const auto &s : v) {
-          std::cout << s << ' ';
-        }
-      }
-      std::cout << '\n';
+    /*search*/
+    const std::string query = "Hello World";
+    const searcher::TextIndexAccessor accessor(path, parser_opts);
+    const searcher::Result result = searcher::search(query, accessor);
+
+    std::cout << "Query: " << query << '\n';
+    std::cout << " id "
+              << " score "
+              << "      text" << '\n';
+
+    for (auto const &[doc_id, score] : result.results_) {
+      const std::string text = accessor.load_document(doc_id);
+      std::cout << doc_id << "  " << score << "    " << text << '\n';
     }
-    std::cout << '\n';
-    for (const auto &[key, val] : doc_index.docs) {
-      std::cout << key << ' ' << val << '\n';
-    }
+    std::cout << std::endl;
 
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';

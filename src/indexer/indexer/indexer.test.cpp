@@ -3,14 +3,14 @@
 
 #include <gtest/gtest.h>
 
-#include <iostream>
-
 TEST(test_add_document, IndexBuilder_test) {
-  const uint16_t ngram_min_length = 3;
-  const uint16_t ngram_max_length = 6;
-  const std::unordered_set<std::string> stop_words = {"the"};
 
-  indexer::IndexBuilder index({ngram_min_length, ngram_max_length}, stop_words);
+  parser::ParserOpts parser_opts;
+  parser_opts.ngram_min_length_ = 3;
+  parser_opts.ngram_max_length_ = 6;
+  parser_opts.stop_words_ = {"the"};
+
+  indexer::IndexBuilder index(parser_opts);
   index.add_document(100, "The Matrix matrix");
   index.add_document(101, "The Matrix Reloaded");
 
