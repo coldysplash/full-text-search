@@ -28,14 +28,18 @@ void index_build_and_write(const IndexConfig &options) {
 void print_search_result(
     const searcher::Result &result, const searcher::IndexAccessor &accessor) {
 
-  std::cout << "id\t"
-            << "score\t"
-            << "\ttext" << '\n';
-  for (auto const &[doc_id, score] : result.results_) {
-    const std::string text = accessor.load_document(doc_id);
-    std::cout << doc_id << '\t' << score << "\t\t" << text << '\n';
+  if (!result.results_.empty()) {
+    std::cout << "id\t"
+              << "score\t"
+              << "\ttext" << '\n';
+    for (auto const &[doc_id, score] : result.results_) {
+      const std::string text = accessor.load_document(doc_id);
+      std::cout << doc_id << '\t' << score << "\t\t" << text << '\n';
+    }
+    std::cout << std::endl;
+  } else {
+    std::cout << "Not found!" << '\n';
   }
-  std::cout << std::endl;
 }
 
 void search_and_print(const SearchConfig &options) {
