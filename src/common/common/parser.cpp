@@ -43,7 +43,7 @@ void delete_stop_words(
       std::remove_if(
           list_strings.begin(),
           list_strings.end(),
-          [&](std::string &item) {
+          [&](const auto &item) {
             return (
                 parser_opts.stop_words_.find(item) !=
                     parser_opts.stop_words_.end() ||
