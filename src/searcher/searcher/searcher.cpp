@@ -2,8 +2,7 @@
 #include <indexer/indexer.hpp>
 #include <searcher/searcher.hpp>
 
-#include <picosha2.h>
-
+#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <map>
@@ -115,6 +114,16 @@ Result sort_results(const std::map<size_t, double> &tmp_results) {
 
         return l.doc_id > r.doc_id;
       });
+
+  const auto max_score_result = sorted.results_.begin();
+  sorted.results_.erase(
+      std::remove_if(
+          sorted.results_.begin(),
+          sorted.results_.end(),
+          [max_score_result](const IdScore &result) {
+            return result.score < max_score_result->score / 2;
+          }),
+      sorted.results_.end());
 
   return sorted;
 }

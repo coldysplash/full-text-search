@@ -42,7 +42,7 @@ private:
 
 public:
   TextIndexAccessor(std::filesystem::path path, parser::ParserOpts parser_opts)
-      : path_(path), parser_opts_(std::move(parser_opts)) {}
+      : path_(std::move(path)), parser_opts_(std::move(parser_opts)) {}
 
   Config config() const override { return parser_opts_; }
   TermInfos

@@ -15,7 +15,7 @@ Checks: >
   -readability-identifier-length,
   -readability-magic-numbers
 WarningsAsErrors: '*'
-HeaderFilterRegex: 'src/(indexer|common|app)'
+HeaderFilterRegex: 'src/(driver|searcher|indexer|common|app)'
 CheckOptions:
   - key:             cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
     value:           'true'

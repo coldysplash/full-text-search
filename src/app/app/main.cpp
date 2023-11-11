@@ -1,59 +1,40 @@
 #include <common/parser.hpp>
+#include <driver/driver.hpp>
 #include <indexer/indexer.hpp>
 #include <searcher/searcher.hpp>
 
 #include <CLI/CLI.hpp>
-#include <nlohmann/json.hpp>
 
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
 
-using json = nlohmann::json;
-
 int main(int argc, char **argv) {
   try {
-    CLI::App app("Parser");
+    CLI::App app("Full-Text-Searcher");
+    app.set_help_all_flag("--help-all", "Expand all help");
+
     std::string filename = "config.json";
     app.add_option("--config", filename, "<path> (default=config.json)");
 
+    driver::IndexConfig index_options;
+    driver::SearchConfig search_options;
+    CLI::App *indexer = driver::create_indexer(app, index_options);
+    CLI::App *searcher = driver::create_searcher(app, search_options);
+    app.require_subcommand(); // 1 or more
+
     CLI11_PARSE(app, argc, argv);
 
-    std::ifstream file(filename);
-    json data = json::parse(file);
+    const parser::ParserOpts parser_opts = parser::parse_config(filename);
+    index_options.parser_opts_ = parser_opts;
+    search_options.parser_opts_ = parser_opts;
 
-    parser::ParserOpts parser_opts;
-    parser_opts.stop_words_ = data["stop_words"];
-    parser_opts.ngram_min_length_ = data["ngram_min_length"];
-    parser_opts.ngram_max_length_ = data["ngram_max_length"];
-
-    /*indexer*/
-    indexer::IndexBuilder index(parser_opts);
-    index.add_document(100, "Hello World");
-    index.add_document(101, "Bye World");
-    index.add_document(102, "Hello Earth");
-
-    const indexer::Index doc_index = index.index();
-    indexer::TextIndexWriter w;
-    const std::filesystem::path path = ".";
-    w.write(path, doc_index, false);
-
-    /*search*/
-    const std::string query = "Hello World";
-    const searcher::TextIndexAccessor accessor(path, parser_opts);
-    const searcher::Result result = searcher::search(query, accessor);
-
-    std::cout << "Query: " << query << '\n';
-    std::cout << " id "
-              << " score "
-              << "      text" << '\n';
-
-    for (auto const &[doc_id, score] : result.results_) {
-      const std::string text = accessor.load_document(doc_id);
-      std::cout << doc_id << "  " << score << "    " << text << '\n';
+    if (indexer->parsed()) {
+      driver::index_build_and_write(index_options);
+    } else if (searcher->parsed()) {
+      driver::search_and_print(search_options);
     }
-    std::cout << std::endl;
 
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
