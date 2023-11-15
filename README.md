@@ -1,18 +1,20 @@
 # Full-text-search
-## Intoduction
+## Introduction
+
 Full-Text Search is a software tool developed in the C++ language.
 ## Installation project
-Clone the repository to your local machine:
+
+1.Clone the repository to your local machine:
 
       git clone https://github.com/your-username/full-text-search
       cd full-text-search
 
-Update git submodules:
+2.Update git submodules:
 
       git submodule init
       git submodule add
 
-Generate and bulding project using presets:
+3.Generate and bulding project using presets:
 
       cmake --preset release
       cmake --build --preset release
