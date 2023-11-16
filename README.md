@@ -1,15 +1,15 @@
 # Full-text-search
 ## Introduction
 
-Full-Text Search is a software tool developed in the C++ language.
-## Installation project
+Full-Text Search is a software tool developed in the C++ language. The application allows you to search the database of books presented in csv format
+## Installation 
 
 1.Clone the repository to your local machine:
 
       git clone https://github.com/your-username/full-text-search
       cd full-text-search
 
-2.Update git submodules:
+2.Add git submodules:
 
       git submodule init
       git submodule add
