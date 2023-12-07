@@ -13,7 +13,10 @@ Checks: >
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-avoid-magic-numbers,
   -readability-identifier-length,
-  -readability-magic-numbers
+  -readability-magic-numbers,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -modernize-use-using,
+  -cppcoreguidelines-avoid-magic-numbers
 WarningsAsErrors: '*'
 HeaderFilterRegex: 'src/(driver|searcher|indexer|common|app)'
 CheckOptions:
