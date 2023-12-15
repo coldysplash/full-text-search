@@ -4,15 +4,15 @@
 extern "C" {
 #endif
 
-typedef struct Json Json;
+typedef struct ParserOpts ParserOpts;
 typedef struct SearcherHandle SearcherHandle;
 typedef struct Results Results;
 
-Json *fts_create_json(const char *path);
+ParserOpts *fts_create_json(const char *path);
 
-void fts_delete_json(Json *config);
+void fts_delete_json(ParserOpts *config);
 
-SearcherHandle *fts_create_searcher(const char *path, Json *config);
+SearcherHandle *fts_create_searcher(const char *path, ParserOpts *config);
 
 void fts_delete_searcher(SearcherHandle *handle);
 
