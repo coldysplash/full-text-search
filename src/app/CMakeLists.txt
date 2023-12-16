@@ -1,4 +1,4 @@
-set(target_name app)
+set(target_name fts)
 
 add_executable(${target_name})
 
